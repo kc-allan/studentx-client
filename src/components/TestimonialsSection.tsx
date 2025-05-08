@@ -1,6 +1,6 @@
-
 import * as React from "react";
 import { Card, CardContent } from "@/components/ui/card";
+import { Quote } from "lucide-react";
 
 const TestimonialsSection = () => {
   const testimonials = [
@@ -25,10 +25,10 @@ const TestimonialsSection = () => {
   ];
 
   return (
-    <section className="py-16 bg-gradient-to-b from-white to-primary-100">
+    <section className="py-20 bg-gradient-to-b from-gray-50 to-primary-50">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold text-primary-900">What Students Say</h2>
+          <h2 className="text-3xl font-bold text-primary">What Students Say</h2>
           <p className="text-gray-600 mt-2 max-w-lg mx-auto">
             Don't just take our word for it — hear from fellow students who are saving big
           </p>
@@ -36,8 +36,13 @@ const TestimonialsSection = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {testimonials.map((testimonial, index) => (
-            <Card key={index} className="border-none shadow-lg">
-              <CardContent className="p-6 flex flex-col items-center text-center">
+            <Card key={index} className="border-none shadow-lg hover:shadow-xl transition-all bg-white relative">
+              <div className="absolute -top-4 -left-4">
+                <div className="bg-primary rounded-full p-2 text-white">
+                  <Quote className="h-5 w-5" />
+                </div>
+              </div>
+              <CardContent className="p-6 pt-8 flex flex-col items-center text-center">
                 <div className="w-16 h-16 rounded-full overflow-hidden mb-4 border-2 border-primary">
                   <img
                     src={testimonial.avatar}
@@ -47,7 +52,7 @@ const TestimonialsSection = () => {
                 </div>
                 <p className="text-gray-600 italic mb-4">"{testimonial.quote}"</p>
                 <div>
-                  <p className="font-semibold">{testimonial.name}</p>
+                  <p className="font-semibold text-primary-700">{testimonial.name}</p>
                   <p className="text-sm text-gray-500">{testimonial.university}</p>
                 </div>
               </CardContent>

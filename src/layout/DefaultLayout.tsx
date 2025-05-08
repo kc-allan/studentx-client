@@ -4,14 +4,12 @@ import { Outlet } from "react-router-dom";
 
 const DefaultLayout: React.FC = () => {
 	return (
-		<div className="flex flex-col items-center bg-black">
-			<Header />
-			{/* <!-- ===== Main Content Start ===== --> */}
+		<div className="mx-auto">
 			<main>
 				<Outlet />
 			</main>
 
-			<div className='lg:hidden'>
+			<div>
 				<Footer />
 			</div>
 			{/* <!-- ===== Footer End ===== --> */}

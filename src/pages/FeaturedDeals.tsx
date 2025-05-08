@@ -133,7 +133,7 @@ const FeaturedDeals = () => {
                   </div>
                 </div>
 
-                <Button className="w-full mt-6">Apply Filters</Button>
+                <Button className="w-full mt-6 bg-brand-primary text-white">Apply Filters</Button>
               </div>
             </div>
 

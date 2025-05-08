@@ -1,4 +1,3 @@
-
 import * as React from "react";
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
@@ -13,8 +12,9 @@ import Footer from "@/components/Footer";
 
 const Index = () => {
   return (
-    <div className="min-h-screen flex flex-col">
-      <div className="flex-grow h-full">
+    <div className="min-h-screen flex flex-col items-center w-full bg-gray-50">
+      <Header />
+      <main className="flex-grow w-full">
         <Hero />
         <CategoryList />
         <FeaturedCoupons />
@@ -23,8 +23,7 @@ const Index = () => {
         <ProviderHighlights />
         <TestimonialsSection />
         <SignUpBanner />
-      </div>
-      <Footer />
+      </main>
     </div>
   );
 };

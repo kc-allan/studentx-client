@@ -12,7 +12,7 @@ export enum CouponType {
   FREE_ITEM = "free_item"
 }
 
-export enum CouponStatus {
+ export enum CouponStatus {
   ACTIVE = "active",
   EXPIRED = "expired",
   REDEEMED = "redeemed",
@@ -61,12 +61,14 @@ export interface Coupon {
   code: string;
   providerId: string;
   providerName: string;
+  providerLogo?: string;
+  currency?: string;
   title: string;
   description: string;
   type: CouponType;
   value: number; // Percentage or fixed amount
-  minPurchase?: number;
-  maxDiscount?: number;
+  minPurchase?: number; // unused
+  maxDiscount?: number; // unused
   startDate: Date;
   endDate: Date;
   image?: string;
@@ -91,4 +93,5 @@ export interface Category {
   name: string;
   slug: string;
   iconName?: string;
+  imageUrl?: string;
 }

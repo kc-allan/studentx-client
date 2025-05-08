@@ -86,7 +86,7 @@ const CouponCard: React.FC<CouponCardProps> = ({ coupon }) => {
         </div>
         
         <Link to={`/coupon/${coupon.id}`} className="w-full">
-          <Button variant="default" className="w-full bg-secondary hover:bg-primary-600 text-white">
+          <Button variant="default" className="w-full bg-brand-primary hover:bg-primary-600 text-white">
             Get Deal
           </Button>
         </Link>

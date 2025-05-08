@@ -19,126 +19,95 @@ export default {
     },
     extend: {
       colors: {
-        border: 'hsl(var(--border))',
-        input: 'hsl(var(--input))',
-        ring: 'hsl(var(--ring))',
-        background: 'hsl(var(--background))',
-        foreground: 'hsl(var(--foreground))',
-        primary: {
-          DEFAULT: '#A64D79',
-          foreground: '#FFFFFF',
-          100: '#EFD5E4',
-          200: '#DFACC9',
-          300: '#CE82AE',
-          400: '#BE5993',
-          500: '#A64D79',
-          600: '#863E62',
-          700: '#6A1E55',
-          800: '#4D1B3E',
-          900: '#3B1C32',
+		foreground: '#262628',
+        // Brand colors
+        brand: {
+          primary: '#DB0271',       // Vibrant pink
+          secondary: '#0000EE',    // Classic blue
+          accent: '#148CFC',       // Bright blue
+          danger: '#C72310',      // Alert red
         },
-        secondary: {
-          DEFAULT: '#6A1E55',
-          foreground: '#FFFFFF',
-          100: '#E8D0DE',
-          200: '#D1A2BE',
-          300: '#B9739D',
-          400: '#A64D79',
-          500: '#8A2A67',
-          600: '#6A1E55',
-          700: '#541943',
-          800: '#3B1C32',
-          900: '#231920',
+        
+        // Neutral colors
+        neutral: {
+          darkest: '#000000', // Black
+          darker: '#161616', // Dark gray
+          dark: '#262628', // Gray 
+          medium: '#596168', // Medium gray
+          light: '#4C5359', // Light gray
+          lighter: '#D8D8D8', // Light gray
+          lightest: '#E2E2E2', // Very light gray
         },
-        accent: {
-          DEFAULT: '#3B1C32',
-          foreground: '#FFFFFF',
-          100: '#DBC5D3',
-          200: '#B78CA8',
-          300: '#93537C',
-          400: '#6A1E55',
-          500: '#57234A',
-          600: '#3B1C32',
-          700: '#2D1826',
-          800: '#1F1119',
-          900: '#1A1A1D',
+        
+        // Background colors
+        background: {
+          DEFAULT: '#FFFFFF', // White
+          light: '#FEFEFE', // Off-white
+          lighter: '#FAFBFC', // Very light gray
+          subtle: '#F4F4F4', // Light gray
+          muted: '#F0F4F8', // Soft gray
+          soft: '#E1E9F0', // Soft blue-gray
+          softer: '#E0E9F0', // Very soft blue-gray
         },
-        highlight: {
-          DEFAULT: '#BE5993',
-          foreground: '#FFFFFF',
-          100: '#EFD5E4',
-          200: '#DFACC9',
-          300: '#CE82AE',
-          400: '#BE5993',
-          500: '#A64D79',
-          600: '#8A2A67',
-          700: '#6A1E55',
-          800: '#541943',
-          900: '#3B1C32',
+        
+        // Text colors
+        text: {
+          primary: '#262628', // Dark gray
+          secondary: '#596168', // Medium gray
+          tertiary: '#4C5359', // Light gray
+          inverted: '#FFFFFF', // White
+          link: '#0000EE', // Classic blue
+          hover: '#148CFC', // Bright blue
+          danger: '#C72310', // Alert red
         },
+        
+        // Border colors
+        border: {
+          DEFAULT: '#E6E6E6', // Light gray
+          strong: '#D8D8D8', // Medium gray
+          subtle: '#F0F4F8', // Soft gray
+          accent: '#148CFC', // Bright blue
+          danger: '#C72310', // Alert red
+        },
+        
+        // Functional colors
         destructive: {
-          DEFAULT: 'hsl(var(--destructive))',
-          foreground: 'hsl(var(--destructive-foreground))'
+          DEFAULT: '#C72310',
+          foreground: '#FFFFFF',
         },
-        muted: {
-          DEFAULT: 'hsl(var(--muted))',
-          foreground: 'hsl(var(--muted-foreground))'
+        success: {
+          DEFAULT: '#28A745', // Added for completeness
+          foreground: '#FFFFFF',
         },
-        popover: {
-          DEFAULT: 'hsl(var(--popover))',
-          foreground: 'hsl(var(--popover-foreground))'
+        warning: {
+          DEFAULT: '#FFC107', // Added for completeness
+          foreground: '#262628',
         },
-        card: {
-          DEFAULT: 'hsl(var(--card))',
-          foreground: 'hsl(var(--card-foreground))'
-        },
-        sidebar: {
-          DEFAULT: 'hsl(var(--sidebar-background))',
-          foreground: 'hsl(var(--sidebar-foreground))',
-          primary: 'hsl(var(--sidebar-primary))',
-          'primary-foreground': 'hsl(var(--sidebar-primary-foreground))',
-          accent: 'hsl(var(--sidebar-accent))',
-          'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
-          border: 'hsl(var(--sidebar-border))',
-          ring: 'hsl(var(--sidebar-ring))'
-        }
       },
       borderRadius: {
-        lg: 'var(--radius)',
-        md: 'calc(var(--radius) - 2px)',
-        sm: 'calc(var(--radius) - 4px)'
+        lg: '0.5rem',
+        md: '0.375rem',
+        sm: '0.25rem',
+        full: '9999px',
       },
       keyframes: {
         'accordion-down': {
-          from: {
-            height: '0'
-          },
-          to: {
-            height: 'var(--radix-accordion-content-height)'
-          }
+          from: { height: '0' },
+          to: { height: 'var(--radix-accordion-content-height)' }
         },
         'accordion-up': {
-          from: {
-            height: 'var(--radix-accordion-content-height)'
-          },
-          to: {
-            height: '0'
-          }
+          from: { height: 'var(--radix-accordion-content-height)' },
+          to: { height: '0' }
         },
         'pulse-light': {
           '0%, 100%': { opacity: '1' },
           '50%': { opacity: '0.8' }
-        },
-        'bounce-gentle': {
-          '0%, 100%': { transform: 'translateY(0)' },
-          '50%': { transform: 'translateY(-5px)' }
         },
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
         'pulse-light': 'pulse-light 2s ease-in-out infinite',
-        'bounce-gentle': 'bounce-gentle 2s ease-in-out infinite',
       }
     }
   },
