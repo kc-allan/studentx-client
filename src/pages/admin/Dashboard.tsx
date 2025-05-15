@@ -12,7 +12,7 @@ import {
   CheckCircle,
   AlertCircle
 } from "lucide-react";
-import AdminLayout from "@/components/admin/AdminLayout";
+import AdminLayout from "@/layout/AdminLayout";
 import { mockCoupons, mockProviders, mockStudents } from "@/data/mockData";
 
 const AdminDashboard = () => {

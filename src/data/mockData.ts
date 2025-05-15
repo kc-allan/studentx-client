@@ -124,7 +124,7 @@ export const mockCoupons: Coupon[] = [
     totalAvailable: 500,
     redeemedCount: 189,
     status: CouponStatus.ACTIVE,
-    categories: ["3"],
+    categories: ["3", "1"],
     terms: "Valid on laptop purchases over $500. One per customer.",
     featured: true
   },

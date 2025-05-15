@@ -77,13 +77,13 @@ const LatestCoupons = () => {
               key={coupon.id} 
               className="bg-background rounded-xl shadow-sm hover:shadow-md transition-all border border-border overflow-hidden"
             >
-              <div className="flex flex-col lg:flex-row">
+              <div className="flex flex-col lg:flex-row h-full">
                 <div className="relative lg:w-2/5">
                   <div className="absolute top-3 left-3 bg-brand-primary text-text-inverted text-xs font-bold px-3 py-1 rounded-full">
                     NEW
                   </div>
                   <div className="h-48 lg:h-full bg-background-subtle flex items-center justify-center">
-                    <img 
+                    <img
                       src={coupon.providerLogo || "/placeholder.svg"} 
                       alt={coupon.providerName}
                       className="h-full w-full object-cover"

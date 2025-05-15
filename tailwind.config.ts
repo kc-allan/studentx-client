@@ -19,7 +19,7 @@ export default {
     },
     extend: {
       colors: {
-		foreground: '#262628',
+        foreground: '#262628',
         // Brand colors
         brand: {
           primary: '#DB0271',       // Vibrant pink
@@ -27,7 +27,7 @@ export default {
           accent: '#148CFC',       // Bright blue
           danger: '#C72310',      // Alert red
         },
-        
+
         // Neutral colors
         neutral: {
           darkest: '#000000', // Black
@@ -38,7 +38,7 @@ export default {
           lighter: '#D8D8D8', // Light gray
           lightest: '#E2E2E2', // Very light gray
         },
-        
+
         // Background colors
         background: {
           DEFAULT: '#FFFFFF', // White
@@ -49,7 +49,7 @@ export default {
           soft: '#E1E9F0', // Soft blue-gray
           softer: '#E0E9F0', // Very soft blue-gray
         },
-        
+
         // Text colors
         text: {
           primary: '#262628', // Dark gray
@@ -60,7 +60,7 @@ export default {
           hover: '#148CFC', // Bright blue
           danger: '#C72310', // Alert red
         },
-        
+
         // Border colors
         border: {
           DEFAULT: '#E6E6E6', // Light gray
@@ -69,7 +69,7 @@ export default {
           accent: '#148CFC', // Bright blue
           danger: '#C72310', // Alert red
         },
-        
+
         // Functional colors
         destructive: {
           DEFAULT: '#C72310',
@@ -103,11 +103,17 @@ export default {
           '0%, 100%': { opacity: '1' },
           '50%': { opacity: '0.8' }
         },
+        'float': {
+          '0%, 100%': { transform: 'translateY(0)' },
+          '50%': { transform: 'translateY(-20px)' },
+        },
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
         'pulse-light': 'pulse-light 2s ease-in-out infinite',
+        'float': 'float 6s ease-in-out infinite',
+        'float-delay': 'float 6s ease-in-out 2s infinite',
       }
     }
   },

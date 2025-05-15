@@ -1,6 +1,6 @@
 import * as React from "react";
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -20,12 +20,21 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Search, User, Menu, X, Zap } from "lucide-react";
 import { categories } from "@/data/mockData";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState, setLogout } from "@/state/auth";
 
 const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const { currentUser, isAuthenticated } = useSelector((state: RootState) => {
+    return {
+      currentUser: state.auth.user,
+      isAuthenticated: !!state.auth.user,
+    };
+  });
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -41,7 +50,7 @@ const Header: React.FC = () => {
 
     window.addEventListener('scroll', handleScroll);
     window.addEventListener('resize', handleResize);
-    
+
     return () => {
       window.removeEventListener('scroll', handleScroll);
       window.removeEventListener('resize', handleResize);
@@ -49,7 +58,7 @@ const Header: React.FC = () => {
   }, []);
 
   return (
-    <header className={`sticky top-0 z-50 w-full transition-all duration-300 ${isScrolled ? 'bg-background shadow-sm' : 'bg-background/90 backdrop-blur-sm'}`}>
+    <header className={`fixed top-0 z-50 w-full transition-all duration-300 ${isScrolled ? 'bg-background shadow-sm' : 'bg-background-subtle w-[96%] mt-4 rounded-lg backdrop-blur-sm py-2'}`}>
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
@@ -73,7 +82,8 @@ const Header: React.FC = () => {
                       {categories.map((category) => (
                         <Link
                           key={category.id}
-                          to={`/categories/${category.slug}`}
+                          replace={false}
+                          to={`/deals?filters=${category.slug}`}
                           className="block p-3 rounded-md hover:bg-background-soft text-text-primary transition-colors text-sm lg:text-base"
                         >
                           {category.name}
@@ -82,14 +92,14 @@ const Header: React.FC = () => {
                     </div>
                   </NavigationMenuContent>
                 </NavigationMenuItem>
-                <Link 
-                  to="/featured" 
+                <Link
+                  to="/deals?filters=featured"
                   className="text-sm lg:text-base font-medium text-text-primary hover:text-brand-primary transition-colors px-3 py-2 whitespace-nowrap"
                 >
                   Featured
                 </Link>
-                <Link 
-                  to="/new" 
+                <Link
+                  to="/deals?filters=new-arrivals"
                   className="text-sm lg:text-base font-medium text-text-primary hover:text-brand-primary transition-colors px-3 py-2 whitespace-nowrap"
                 >
                   New Deals
@@ -107,23 +117,23 @@ const Header: React.FC = () => {
                 />
               </div>
 
-              {isLoggedIn ? (
+              {isAuthenticated ? (
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button 
-                      variant="ghost" 
-                      size="icon" 
+                    <Button
+                      variant="ghost"
+                      size="icon"
                       className="hover:bg-background-soft"
                     >
                       <User className="h-4 w-4 text-text-primary" />
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent 
-                    align="end" 
+                  <DropdownMenuContent
+                    align="end"
                     className="border-border bg-background min-w-[180px]"
                   >
                     <DropdownMenuLabel className="text-text-primary">
-                      My Account
+                      {currentUser.first_name} {currentUser.last_name}
                     </DropdownMenuLabel>
                     <DropdownMenuSeparator className="bg-border" />
                     <DropdownMenuItem className="hover:bg-background-soft">
@@ -142,8 +152,10 @@ const Header: React.FC = () => {
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuSeparator className="bg-border" />
-                    <DropdownMenuItem 
-                      onClick={() => setIsLoggedIn(false)}
+                    <DropdownMenuItem
+                      onClick={() => {
+                        dispatch(setLogout());
+                      }}
                       className="text-brand-danger hover:bg-red-50"
                     >
                       Sign Out
@@ -154,13 +166,13 @@ const Header: React.FC = () => {
                 <div className="flex items-center space-x-2">
                   <Button
                     variant="outline"
-                    onClick={() => setIsLoggedIn(true)}
+                    onClick={() => navigate('/auth?page=login')}
                     className="border-border text-text-primary hover:bg-background-soft whitespace-nowrap text-sm h-9 px-3"
                   >
                     Log In
                   </Button>
-                  <Button 
-                    onClick={() => setIsLoggedIn(true)}
+                  <Button
+                    onClick={() => navigate('/auth?page=signup')}
                     className="bg-brand-primary hover:bg-brand-secondary text-text-inverted whitespace-nowrap text-sm h-9 px-3"
                   >
                     Sign Up
@@ -215,8 +227,8 @@ const Header: React.FC = () => {
                 >
                   Featured Deals
                 </Link>
-                <Link 
-                  to="/new" 
+                <Link
+                  to="/new"
                   className="px-3 py-2 rounded-md text-text-primary hover:bg-background-soft"
                   onClick={() => setIsMenuOpen(false)}
                 >
@@ -225,7 +237,7 @@ const Header: React.FC = () => {
               </nav>
 
               <div className="pt-3 border-t border-border px-2">
-                {isLoggedIn ? (
+                {isAuthenticated ? (
                   <>
                     <Link
                       to="/dashboard"
@@ -243,7 +255,7 @@ const Header: React.FC = () => {
                     </Link>
                     <button
                       onClick={() => {
-                        setIsLoggedIn(false);
+                        dispatch(setLogout());
                         setIsMenuOpen(false);
                       }}
                       className="w-full text-left px-3 py-2 rounded-md text-brand-danger hover:bg-red-50"
@@ -255,13 +267,13 @@ const Header: React.FC = () => {
                   <div className="flex flex-col space-y-2">
                     <Button
                       variant="outline"
-                      onClick={() => setIsLoggedIn(true)}
+                      onClick={() => navigate('/auth?page=login')}
                       className="w-full border-border text-text-primary hover:bg-background-soft"
                     >
                       Log In
                     </Button>
                     <Button
-                      onClick={() => setIsLoggedIn(true)}
+                      onClick={() => navigate('/auth?page=signup')}
                       className="w-full bg-brand-primary hover:bg-brand-secondary text-text-inverted"
                     >
                       Sign Up

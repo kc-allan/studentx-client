@@ -1,58 +1,70 @@
 import * as React from "react";
-import { Link } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { Zap, ArrowRight } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { mockProviders } from "@/data/mockData";
+import { ArrowRight, BadgeCheck, Star } from "lucide-react";
+import { Button } from "./ui/button";
 
-const SignUpBanner = () => {
+const ProviderHighlights = () => {
   return (
-    <section className="py-16 bg-gradient-to-br from-brand-primary to-brand-secondary relative overflow-hidden">
-      {/* Abstract background elements */}
-      <div className="absolute inset-0 overflow-hidden opacity-10">
-        <div className="absolute rounded-full h-80 w-80 bg-brand-accent -top-20 -right-20"></div>
-        <div className="absolute rounded-full h-64 w-64 bg-text-inverted -bottom-32 -left-32"></div>
-        <div className="absolute rounded-full h-40 w-40 bg-brand-primary opacity-30 top-1/4 right-1/3"></div>
-      </div>
+    <section className="py-20 bg-background-soft">
+      <div className="container mx-auto px-4">
+        <div className="text-center mb-14">
+          <div className="inline-flex items-center px-4 py-2 rounded-full bg-brand-primary/10 text-brand-primary text-sm font-medium mb-4">
+            <BadgeCheck className="h-5 w-5 mr-2" />
+            Trusted Partners
+          </div>
+          <h2 className="text-3xl md:text-4xl font-bold text-text-primary mb-3">
+            Featured Brands
+          </h2>
+          <p className="text-neutral-medium text-lg max-w-2xl mx-auto">
+            Discover exclusive student discounts from top companies
+          </p>
+        </div>
 
-      <div className="container mx-auto px-4 relative z-10">
-        <div className="flex flex-col lg:flex-row items-center justify-between gap-8 max-w-6xl mx-auto">
-          <div className="text-center lg:text-left max-w-2xl">
-            <div className="inline-flex items-center px-4 py-2 rounded-full bg-background/20 text-text-inverted text-sm font-medium mb-4">
-              <Zap className="h-4 w-4 mr-2 fill-current" />
-              Exclusive Student Offers
-            </div>
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-text-inverted mb-4">
-              Start Saving Today
-            </h2>
-            <p className="text-text-inverted/90 text-lg">
-              Join our community of students enjoying exclusive discounts on brands you love.
-            </p>
-          </div>
-          
-          <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
-            <Button 
-              asChild 
-              size="lg" 
-              className="bg-background text-brand-primary hover:bg-background-soft hover:text-brand-primary px-8 py-6"
+        <div className="flex flex-wrap justify-center gap-6">
+          {mockProviders.map((provider) => (
+            <Card 
+              key={provider.id} 
+              className="border border-border hover:border-brand-primary/30 hover:shadow-sm transition-all bg-background group"
             >
-              <Link to="/signup" className="flex items-center">
-                Sign Up Free <ArrowRight className="ml-2 h-5 w-5" />
-              </Link>
-            </Button>
-            <Button 
-              asChild 
-              size="lg" 
-              variant="outline" 
-              className="border-text-inverted text-text-inverted hover:bg-brand-primary/20 hover:text-text-inverted px-8 py-6"
-            >
-              <Link to="/learn-more" className="flex items-center">
-                How It Works <ArrowRight className="ml-2 h-5 w-5" />
-              </Link>
-            </Button>
-          </div>
+              <CardContent className="p-6 flex flex-col items-center">
+                <div className="relative mb-4">
+                  <div className="w-20 h-20 rounded-full bg-background-subtle p-3 flex items-center justify-center border-2 border-border-subtle group-hover:border-brand-primary/20 transition-colors">
+                    <img 
+                      src={provider.logo || "/placeholder.svg"} 
+                      alt={provider.name} 
+                      className="w-full h-full object-cover rounded-full"
+                    />
+                  </div>
+                  {provider.isPremium && (
+                    <div className="absolute -top-2 -right-2 bg-brand-primary text-text-inverted rounded-full p-1">
+                      <Star className="h-4 w-4 fill-current" />
+                    </div>
+                  )}
+                </div>
+                <h3 className="text-sm font-semibold text-center text-text-primary group-hover:text-brand-primary transition-colors">
+                  {provider.name}
+                </h3>
+                <div className="mt-2 text-xs text-neutral-light flex items-center">
+                  <Star className="h-3 w-3 fill-current text-brand-primary mr-1" />
+                  <span>{provider.rating || '4.8'}</span>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+
+        <div className="mt-16 text-center">
+          <Button
+            variant="outline"
+            className="border-brand-primary text-brand-primary hover:bg-background-soft px-8 py-6"
+          >
+            View All Partners <ArrowRight className="ml-2 h-5 w-5" />
+          </Button>
         </div>
       </div>
     </section>
   );
 };
 
-export default SignUpBanner;
+export default ProviderHighlights;

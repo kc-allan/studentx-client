@@ -51,7 +51,7 @@ const HowItWorks = () => {
           {/* Progress line */}
           <div className="hidden lg:block absolute top-16 left-0 right-0 h-1 bg-background-subtle z-0 mx-16"></div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 relative z-10">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 relative z-10">
             {steps.map((step) => (
               <div key={step.number} className="flex flex-col items-center">
                 <Card className="border-none transition-all w-full h-full">
@@ -74,7 +74,7 @@ const HowItWorks = () => {
                 </Card>
                 
                 {step.number < 4 && (
-                  <div className="lg:hidden mt-4 mb-2">
+                  <div className="lg:hidden">
                     <div className="w-8 h-8 flex items-center justify-center">
                       <ArrowDown className="text-neutral-light" />
                     </div>

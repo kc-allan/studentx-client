@@ -9,7 +9,7 @@ import { Zap, ArrowRight } from "lucide-react";
 
 const Categories = () => {
   return (
-    <div className="min-h-screen flex flex-col bg-background-soft">
+    <div className="min-h-screen flex flex-col items-center bg-background-soft">
       <Header />
       <main className="flex-grow">
         {/* Hero Section */}
@@ -66,7 +66,7 @@ const Categories = () => {
           </div>
         </div>
 
-        <SignUpBanner />
+        {/* <SignUpBanner /> */}
       </main>
     </div>
   );

@@ -1,7 +1,7 @@
 
 import * as React from "react";
-import { Link, useLocation } from "react-router-dom";
-import { 
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import {
   LayoutDashboard,
   Tag,
   Store,
@@ -12,6 +12,8 @@ import {
   Menu,
   X
 } from "lucide-react";
+import { useSelector } from "react-redux";
+import { RootState } from "@/state/auth";
 
 interface MerchantLayoutProps {
   children: React.ReactNode;
@@ -20,6 +22,17 @@ interface MerchantLayoutProps {
 const MerchantLayout: React.FC<MerchantLayoutProps> = ({ children }) => {
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
+  const { isAuthenticated, user } = useSelector((state: RootState) => ({
+    user: state.auth.user,
+    isAuthenticated: !!state.auth.user
+  }));
+  const navigate = useNavigate();
+
+  React.useEffect(() => {
+    if (!isAuthenticated || !user) {
+      navigate("/auth?page=login");
+    }
+  }, [isAuthenticated, user]);
 
   const menuItems = [
     {
@@ -60,9 +73,9 @@ const MerchantLayout: React.FC<MerchantLayoutProps> = ({ children }) => {
       <div className="md:hidden fixed top-0 left-0 right-0 z-20 bg-white border-b p-4">
         <div className="flex items-center justify-between">
           <Link to="/merchant">
-            <h1 className="text-xl font-bold text-primary">Merchant Portal</h1>
+            <h1 className="text-xl font-bold text-primary">Student<span className="text-brand-primary">X</span></h1>
           </Link>
-          <button 
+          <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             className="p-2 rounded-md hover:bg-gray-100"
           >
@@ -75,21 +88,20 @@ const MerchantLayout: React.FC<MerchantLayoutProps> = ({ children }) => {
       <aside className="hidden md:flex w-64 flex-col bg-white border-r h-screen sticky top-0">
         <div className="p-4 border-b">
           <Link to="/merchant">
-            <h1 className="text-xl font-bold text-primary">Merchant Portal</h1>
+            <h1 className="text-xl font-bold text-primary">Student<span className="text-brand-primary">X</span></h1>
           </Link>
         </div>
-        
+
         <nav className="flex-1 overflow-y-auto p-4">
           <ul className="space-y-2">
             {menuItems.map((item) => (
               <li key={item.name}>
                 <Link
                   to={item.path}
-                  className={`flex items-center p-3 rounded-md transition-colors ${
-                    location.pathname === item.path
-                      ? "bg-primary text-white"
-                      : "hover:bg-gray-100"
-                  }`}
+                  className={`flex items-center p-3 rounded-md transition-colors ${location.pathname === item.path
+                    ? "bg-brand-accent text-white"
+                    : "hover:bg-gray-100"
+                    }`}
                 >
                   {item.icon}
                   <span className="ml-3">{item.name}</span>
@@ -116,18 +128,17 @@ const MerchantLayout: React.FC<MerchantLayoutProps> = ({ children }) => {
           <div className="p-4 border-b mt-14">
             <h1 className="text-xl font-bold text-primary">Merchant Portal</h1>
           </div>
-          
+
           <nav className="flex-1 overflow-y-auto p-4">
             <ul className="space-y-2">
               {menuItems.map((item) => (
                 <li key={item.name}>
                   <Link
                     to={item.path}
-                    className={`flex items-center p-3 rounded-md transition-colors ${
-                      location.pathname === item.path
-                        ? "bg-primary text-white"
-                        : "hover:bg-gray-100"
-                    }`}
+                    className={`flex items-center p-3 rounded-md transition-colors ${location.pathname === item.path
+                      ? "bg-primary text-white"
+                      : "hover:bg-gray-100"
+                      }`}
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     {item.icon}
@@ -152,7 +163,7 @@ const MerchantLayout: React.FC<MerchantLayoutProps> = ({ children }) => {
 
       {/* Overlay for mobile menu */}
       {isMobileMenuOpen && (
-        <div 
+        <div
           className="md:hidden fixed inset-0 bg-black/50 z-0"
           onClick={() => setIsMobileMenuOpen(false)}
         ></div>

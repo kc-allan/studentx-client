@@ -8,7 +8,7 @@ import Index from "./pages/Index";
 import CouponDetails from "./pages/CouponDetails";
 import HowItWorks from "./pages/HowItWorks";
 import FeaturedDeals from "./pages/FeaturedDeals";
-import NewDeals from "./pages/NewDeals";
+import NewDeals from "./pages/CouponDeals";
 import Categories from "./pages/Categories";
 import SignUp from "./pages/SignUp";
 import Login from "./pages/Login";
@@ -25,6 +25,9 @@ import MerchantSettings from "./pages/merchant/Settings";
 // Admin routes
 import AdminDashboard from "./pages/admin/Dashboard";
 import DefaultLayout from "./layout/DefaultLayout";
+import CouponDeals from "./pages/CouponDeals";
+import AuthPage from "./pages/Login";
+import ProtectedRoute from "./context/ProtectedRoute";
 
 const queryClient = new QueryClient();
 
@@ -35,16 +38,24 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
-          {/* Main public routes */}
           <Route element={<DefaultLayout />}>
             <Route path="/" element={<Index />} />
-            <Route path="/coupon/:id" element={<CouponDetails />} />
+            <Route path="/auth" element={<AuthPage />} />
+            <Route path="/categories" element={<Categories />} />
+            <Route path="/deals" element={<CouponDeals />} />
+          </Route>
+
+          {/* Main public routes */}
+          <Route element={<DefaultLayout />}>
+
+            <Route path="/coupon/:id" element={
+              <ProtectedRoute allowedRoles={["student"]}>
+                <CouponDetails />
+              </ProtectedRoute>
+            } />
             <Route path="/how-it-works" element={<HowItWorks />} />
             <Route path="/featured" element={<FeaturedDeals />} />
-            <Route path="/new" element={<NewDeals />} />
-            <Route path="/categories" element={<Categories />} />
             <Route path="/signup" element={<SignUp />} />
-            <Route path="/login" element={<Login />} />
           </Route>
           {/* Merchant routes */}
           <Route path="/merchant" element={<MerchantDashboard />} />

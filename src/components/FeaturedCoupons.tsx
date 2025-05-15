@@ -55,7 +55,7 @@ const FeaturedCoupons = () => {
   const featuredCoupons = getFeaturedCoupons().slice(0, 4);
 
   return (
-    <section className="py-16 bg-background-DEFAULT">
+    <section className="py-16 bg-background">
       <div className="container mx-auto px-4">
         <div className="flex flex-col md:flex-row justify-between items-center mb-8">
           <div>
@@ -78,7 +78,7 @@ const FeaturedCoupons = () => {
           {featuredCoupons.map((coupon: Coupon) => (
             <div
               key={coupon.id}
-              className="bg-background-DEFAULT rounded-lg shadow-sm hover:shadow-md transition-shadow border border-border-DEFAULT relative"
+              className="bg-background rounded-lg shadow-sm hover:shadow-md transition-shadow border border-border relative"
             >
               <div className="relative">
                 <div className="absolute top-3 left-3 bg-brand-primary text-text-inverted text-xs font-bold px-2 py-1 rounded">
@@ -100,7 +100,7 @@ const FeaturedCoupons = () => {
               <Avatar
                 src={coupon.providerLogo || "/placeholder.svg"}
                 alt={coupon.providerName}
-                className="absolute -bottom-6 left-4 h-16 w-16 rounded-full border-2 border-background-DEFAULT shadow-md"
+                className="absolute -bottom-6 left-4 h-16 w-16 rounded-full border-2 border-background shadow-md"
               />
 
               <div className="p-4 pt-8">

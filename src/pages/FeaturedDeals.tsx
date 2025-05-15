@@ -6,7 +6,7 @@ import CouponCard from "@/components/CouponCard";
 import SignUpBanner from "@/components/SignUpBanner";
 import { getFeaturedCoupons } from "@/data/mockData";
 import { Button } from "@/components/ui/button";
-import { 
+import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
@@ -19,9 +19,9 @@ const FeaturedDeals = () => {
   const [expanded, setExpanded] = React.useState(false);
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col items-center pt-16 w-full">
       <Header />
-      <main className="flex-grow">
+      <main className="flex-grow w-full">
         <div className="bg-primary-100 py-8">
           <div className="container mx-auto px-4">
             <h1 className="text-4xl font-bold text-center">Featured Student Deals</h1>
@@ -148,9 +148,7 @@ const FeaturedDeals = () => {
           </div>
         </div>
 
-        <SignUpBanner />
       </main>
-      <Footer />
     </div>
   );
 };

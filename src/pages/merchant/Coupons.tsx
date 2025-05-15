@@ -1,6 +1,6 @@
 
 import * as React from "react";
-import MerchantLayout from "@/components/merchant/MerchantLayout";
+import MerchantLayout from "@/layout/MerchantLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { mockCoupons } from "@/data/mockData";
 import { Badge } from "@/components/ui/badge";

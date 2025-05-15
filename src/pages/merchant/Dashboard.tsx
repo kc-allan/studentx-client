@@ -11,7 +11,7 @@ import {
   Users,
   Eye
 } from "lucide-react";
-import MerchantLayout from "@/components/merchant/MerchantLayout";
+import MerchantLayout from "@/layout/MerchantLayout";
 import { mockCoupons } from "@/data/mockData";
 
 const MerchantDashboard = () => {

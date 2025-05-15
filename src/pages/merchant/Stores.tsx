@@ -1,6 +1,6 @@
 
 import * as React from "react";
-import MerchantLayout from "@/components/merchant/MerchantLayout";
+import MerchantLayout from "@/layout/MerchantLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { PlusCircle, Edit, Trash } from "lucide-react";
