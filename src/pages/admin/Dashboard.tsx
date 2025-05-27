@@ -2,12 +2,12 @@
 import * as React from "react";
 import { Link } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { 
-  BarChart2, 
-  Shield, 
-  Users, 
-  Store, 
-  Tag, 
+import {
+  BarChart2,
+  Shield,
+  Users,
+  Store,
+  Tag,
   Settings,
   CheckCircle,
   AlertCircle
@@ -185,13 +185,12 @@ const AdminDashboard = () => {
                       </div>
                     </div>
                     <div className="flex items-center">
-                      <span className={`inline-block px-2 py-1 text-xs rounded-full mr-2 ${
-                        student.verificationStatus === "verified" 
-                          ? "bg-green-100 text-green-800" 
+                      <span className={`inline-block px-2 py-1 text-xs rounded-full mr-2 ${student.verificationStatus === "verified"
+                          ? "bg-green-100 text-green-800"
                           : student.verificationStatus === "rejected"
-                          ? "bg-red-100 text-red-800"
-                          : "bg-amber-100 text-amber-800"
-                      }`}>
+                            ? "bg-red-100 text-red-800"
+                            : "bg-amber-100 text-amber-800"
+                        }`}>
                         {student.verificationStatus.charAt(0).toUpperCase() + student.verificationStatus.slice(1)}
                       </span>
                       <Link to={`/admin/students/${student.id}`}>

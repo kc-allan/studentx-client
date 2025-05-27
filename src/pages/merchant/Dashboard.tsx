@@ -2,12 +2,12 @@
 import * as React from "react";
 import { Link } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { 
-  BarChart2, 
-  PlusCircle, 
-  Tag, 
-  Settings, 
-  Store, 
+import {
+  BarChart2,
+  PlusCircle,
+  Tag,
+  Settings,
+  Store,
   Users,
   Eye
 } from "lucide-react";
@@ -19,8 +19,8 @@ const MerchantDashboard = () => {
   const totalCoupons = mockCoupons.length;
   const activeCoupons = mockCoupons.filter(c => c.status === "active").length;
   const totalRedemptions = mockCoupons.reduce((acc, c) => acc + c.redeemedCount, 0);
-  const conversionRate = totalCoupons > 0 
-    ? Math.round((totalRedemptions / (mockCoupons.reduce((acc, c) => acc + c.totalAvailable, 0))) * 100) 
+  const conversionRate = totalCoupons > 0
+    ? Math.round((totalRedemptions / (mockCoupons.reduce((acc, c) => acc + c.totalAvailable, 0))) * 100)
     : 0;
 
   return (

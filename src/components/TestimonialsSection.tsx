@@ -44,16 +44,16 @@ const TestimonialsSection = () => {
 
   return (
     <section className="py-20 bg-background-subtle">
-      <div className="container mx-auto px-4">
+      <div className="mx-auto px-4">
         <div className="text-center mb-16">
-          <div className="inline-flex items-center px-4 py-2 rounded-full bg-brand-primary/10 text-brand-primary text-sm font-medium mb-4">
+          <div className="inline-flex items-center text-center px-4 py-2 rounded-full bg-brand-primary/10 text-brand-primary text-sm font-medium mb-4">
             <Quote className="h-4 w-4 mr-2" />
             Student Testimonials
           </div>
           <h2 className="text-3xl md:text-4xl font-bold text-text-primary mb-3">
             Real Students, Real Savings
           </h2>
-          <p className="text-neutral-medium text-lg max-w-2xl mx-auto">
+          <p className="text-neutral-medium text-lg max-w-full ">
             Hear from students who are already enjoying exclusive discounts
           </p>
         </div>

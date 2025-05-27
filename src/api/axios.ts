@@ -1,4 +1,5 @@
 // src/api/axiosInstance.js
+import { setLogout } from '@/state/auth';
 import axios from 'axios';
 
 // Create an instance
@@ -15,8 +16,10 @@ axiosInstance.interceptors.response.use(
 		const status = error.response?.status;
 
 		if (status === 401) {
+			localStorage.clear();
 			if (window.location.pathname !== '/auth') {
-				window.location.href = '/auth?page=login';
+				const next = window.location.pathname + window.location.search;
+				window.location.href = '/auth?page=login' + `&next=${encodeURIComponent(next)}`;
 			}
 		} else if (status === 403) {
 			// Handle Forbidden

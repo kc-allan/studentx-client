@@ -5,7 +5,7 @@ import { Zap, ArrowRight } from "lucide-react";
 
 const SignUpBanner = () => {
   return (
-    <section className="py-16 bg-gradient-to-br from-brand-primary/60 via-neutral-700 to-gray-900 relative overflow-hidden">
+    <section className="py-16 h-100 w-[90%] rounded-lg absolute -translate-y-[60%] left-1/2 -translate-x-1/2  bg-gradient-to-br from-brand-primary/60 via-neutral-700 to-gray-900 overflow-hidden">
       {/* Abstract background elements */}
       <div className="absolute inset-0 overflow-hidden opacity-10">
         <div className="absolute rounded-full h-80 w-80 bg-brand-accent -top-20 -right-20"></div>
@@ -13,8 +13,8 @@ const SignUpBanner = () => {
         <div className="absolute rounded-full h-40 w-40 bg-brand-primary opacity-30 top-1/4 right-1/3"></div>
       </div>
 
-      <div className="container mx-auto px-4 relative z-10">
-        <div className="flex flex-col lg:flex-row items-center justify-between gap-8 max-w-6xl mx-auto">
+      <div className="container px-4 relative z-10">
+        <div className="flex flex-col lg:flex-row items-center justify-between gap-8 max-w-6xl ">
           <div className="text-center lg:text-left max-w-2xl">
             <div className="inline-flex items-center px-4 py-2 rounded-full bg-background/20 border border-gray-700 text-text-inverted text-sm font-medium mb-4">
               <Zap className="h-4 w-4 mr-2 fill-current" />
@@ -42,7 +42,7 @@ const SignUpBanner = () => {
               asChild 
               size="lg" 
               variant="outline" 
-              className="border-text-inverted text-text-inverted hover:bg-brand-primary/20 hover:text-text-inverted px-8 py-6"
+              className="border-none text-text-inverted bg-brand-primary hover:bg-brand-primary/70 hover:text-text-inverted px-8 py-6"
             >
               <Link to="/learn-more" className="flex items-center">
                 How It Works <ArrowRight className="ml-2 h-5 w-5" />

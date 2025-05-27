@@ -130,7 +130,7 @@
   }
   
   .btn-primary {
-    @apply bg-primary hover:bg-primary-600 text-white font-medium py-2 px-4 rounded-md transition-all;
+    @apply bg-brand-primary hover:bg-brand-primary/70 text-white font-medium py-2 px-4 rounded-md transition-all;
   }
   
   .btn-secondary {

@@ -23,15 +23,15 @@ const FeaturedDeals = () => {
       <Header />
       <main className="flex-grow w-full">
         <div className="bg-primary-100 py-8">
-          <div className="container mx-auto px-4">
+          <div className="container  px-4">
             <h1 className="text-4xl font-bold text-center">Featured Student Deals</h1>
-            <p className="text-center mt-3 text-gray-600 max-w-2xl mx-auto">
+            <p className="text-center mt-3 text-gray-600 max-w-2xl ">
               Discover our handpicked selection of the best student discounts and offers currently available
             </p>
           </div>
         </div>
 
-        <div className="container mx-auto px-4 py-12">
+        <div className="container  px-4 py-12">
           <div className="flex flex-col md:flex-row gap-8">
             {/* Filters - Mobile Collapsible */}
             <div className="md:hidden w-full mb-6">

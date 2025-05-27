@@ -1,95 +1,85 @@
 import * as React from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { CheckCircle, Handshake, ShoppingBag, FileText, ArrowDown } from "lucide-react";
+import { CheckCircle, Handshake, ShoppingBag, FileText, ArrowDown, ChevronDown, Zap, Search, UserPlus, BadgeCheck, ChevronRight } from "lucide-react";
 import { Button } from "./ui/button";
+import { useSelector } from "react-redux";
+import { RootState } from "@/state";
 
 const HowItWorks = () => {
+  const isAuthenticated = useSelector((state: RootState) => !!state.auth.user);
   const steps = [
     {
-      number: 1,
-      title: "Create an Account",
-      description: "Sign up using your student email to verify your status.",
-      icon: <FileText className="h-8 w-8" />,
-      color: "bg-brand-primary",
+      title: "Sign Up",
+      description: "Create your free account with your student email",
+      icon: <UserPlus className="h-5 w-5 sm:h-6 sm:w-6" />,
     },
     {
-      number: 2,
-      title: "Browse Deals",
-      description: "Explore thousands of exclusive student discounts and offers.",
-      icon: <Handshake className="h-8 w-8" />,
-      color: "bg-brand-secondary",
+      title: "Verify",
+      description: "Confirm your student status instantly",
+      icon: <BadgeCheck className="h-5 w-5 sm:h-6 sm:w-6" />,
     },
     {
-      number: 3,
-      title: "Get Your Coupon",
-      description: "Click on a deal to get a unique coupon code just for you.",
-      icon: <ShoppingBag className="h-8 w-8" />,
-      color: "bg-brand-accent",
+      title: "Browse",
+      description: "Discover thousands of exclusive deals",
+      icon: <Search className="h-5 w-5 sm:h-6 sm:w-6" />,
     },
     {
-      number: 4,
-      title: "Save Money",
-      description: "Use your coupon online or in-store and enjoy the savings!",
-      icon: <CheckCircle className="h-8 w-8" />,
-      color: "bg-neutral-dark",
+      title: "Save",
+      description: "Use your discounts and save money",
+      icon: <Zap className="h-5 w-5 sm:h-6 sm:w-6" />,
     },
   ];
 
   return (
-    <section className="py-20 bg-background-soft">
-      <div className="container mx-auto px-4">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold text-text-primary mb-4">
-            How It Works
-          </h2>
-          <p className="text-neutral-medium text-lg max-w-2xl mx-auto">
-            Getting started is quick and easy. Follow these simple steps to unlock exclusive student savings:
+    <section id="how-it-works" className="py-12 sm:py-16 w-full bg-white">
+      <div className="container w-full px-4 sm:px-6 mx-auto">
+        <div className="text-center mb-8 sm:mb-12">
+          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3 sm:mb-4">How StudentX Works</h2>
+          <p className="text-gray-600 max-w-2xl mx-auto text-sm sm:text-base">
+            Get started in minutes and start saving on everything you need
           </p>
         </div>
 
         <div className="relative">
           {/* Progress line */}
-          <div className="hidden lg:block absolute top-16 left-0 right-0 h-1 bg-background-subtle z-0 mx-16"></div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 relative z-10">
-            {steps.map((step) => (
-              <div key={step.number} className="flex flex-col items-center">
-                <Card className="border-none transition-all w-full h-full">
-                  <CardContent className="p-8 flex flex-col items-center">
-                    <div className={`${step.color} text-text-inverted rounded-full w-16 h-16 flex items-center justify-center mb-6`}>
-                      <div className="relative">
-                        {step.icon}
-                        <span className="absolute -top-2 -right-2 bg-background-subtle text-text-primary rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold">
-                          {step.number}
-                        </span>
-                      </div>
+          <div className="hidden md:block absolute top-1/2 left-0 right-0 h-1 bg-gray-200 z-0 mx-16"></div>
+
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 md:gap-8 relative z-10">
+            {steps.map((step, index) => (
+              <div key={index} className="flex flex-col items-center">
+                <div className="bg-white border border-gray-200 rounded-lg sm:rounded-xl p-4 sm:p-6 shadow-sm w-full h-full transition-all hover:shadow-md">
+                  <div className="bg-brand-primary/10 text-brand-primary w-10 h-10 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl flex items-center justify-center mb-3 sm:mb-4 mx-auto">
+                    {step.icon}
+                  </div>
+                  <div className="text-center">
+                    <div className="md:hidden bg-gray-100 text-gray-800 w-6 h-6 sm:w-8 sm:h-8 rounded-full flex items-center justify-center font-bold mb-2 sm:mb-3 mx-auto text-sm sm:text-base">
+                      {index + 1}
                     </div>
-                    <h3 className="text-xl font-bold text-text-primary mb-3 text-center">
-                      {step.title}
-                    </h3>
-                    <p className="text-neutral-medium text-center">
-                      {step.description}
-                    </p>
-                  </CardContent>
-                </Card>
-                
-                {step.number < 4 && (
-                  <div className="lg:hidden">
-                    <div className="w-8 h-8 flex items-center justify-center">
-                      <ArrowDown className="text-neutral-light" />
-                    </div>
+                    <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-1 sm:mb-2">{step.title}</h3>
+                    <p className="text-gray-600 text-sm sm:text-base">{step.description}</p>
+                  </div>
+                </div>
+
+                {index < steps.length - 1 && (
+                  <div className="md:hidden mt-3 sm:mt-4 mb-3 sm:mb-4">
+                    {(index + 1) % 2 == 0 ? (
+                    <ChevronRight className="text-gray-300 h-5 w-5 sm:h-6 sm:w-6" />
+                    ) : (
+                    <ChevronDown className="text-gray-300 h-5 w-5 sm:h-6 sm:w-6" />
+                    )}
                   </div>
                 )}
               </div>
             ))}
           </div>
         </div>
-
-        <div className="mt-16 text-center">
-          <Button className="bg-brand-primary hover:bg-brand-secondary text-text-inverted px-8 py-6 text-lg">
-            Get Started Today
-          </Button>
-        </div>
+        {!isAuthenticated && (
+          <div className="mt-12 sm:mt-16 text-center">
+            <Button className="bg-brand-primary hover:bg-brand-primary/90 px-6 py-4 sm:px-8 sm:py-6 text-white text-base sm:text-lg">
+              Join Now & Start Saving
+            </Button>
+          </div>
+        )}
       </div>
     </section>
   );

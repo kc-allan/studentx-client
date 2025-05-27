@@ -1,11 +1,18 @@
 
 import * as React from "react";
 import { Link } from "react-router-dom";
+import SignUpBanner from "./SignUpBanner";
+import { useSelector } from "react-redux";
+import { RootState } from "@/state";
 
 const Footer: React.FC = () => {
+  const isAuthenticated = useSelector((state: RootState) => !!state.auth.user)
   return (
-    <footer className="bg-gray-900 text-white">
-      <div className="container mx-auto px-4 py-12">
+    <footer className={`bg-gray-900 w-full ${!isAuthenticated && 'mt-48'} relative text-white`}>
+      {!isAuthenticated && (
+        <SignUpBanner />
+      )}
+      <div className={`container ${!isAuthenticated && 'pt-48'}  px-4 py-12`}>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           <div>
             <h3 className="text-xl font-bold mb-4">Student<span className="text-brand-primary">X</span> </h3>
@@ -33,7 +40,7 @@ const Footer: React.FC = () => {
               </a>
             </div>
           </div>
-          
+
           <div>
             <h3 className="text-lg font-semibold mb-4">Quick Links</h3>
             <ul className="space-y-2">
@@ -51,7 +58,7 @@ const Footer: React.FC = () => {
               </li>
             </ul>
           </div>
-          
+
           <div>
             <h3 className="text-lg font-semibold mb-4">For Businesses</h3>
             <ul className="space-y-2">
@@ -69,7 +76,7 @@ const Footer: React.FC = () => {
               </li>
             </ul>
           </div>
-          
+
           <div>
             <h3 className="text-lg font-semibold mb-4">Contact & Support</h3>
             <ul className="space-y-2">
@@ -88,7 +95,7 @@ const Footer: React.FC = () => {
             </ul>
           </div>
         </div>
-        
+
         <div className="border-t border-gray-800 mt-12 pt-8">
           <p className="text-center text-gray-400 text-sm">
             &copy; {new Date().getFullYear()} StudentX. All rights reserved.

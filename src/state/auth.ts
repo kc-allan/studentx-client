@@ -7,10 +7,6 @@ export interface AuthState {
 	role: string | null;
 }
 
-export interface RootState {
-	auth: AuthState;
-}
-
 const initialValue = {
 	user: null,
 	role: null,
@@ -25,8 +21,10 @@ const authSlice = createSlice({
 			state.role = action.payload.role;
 		},
 		setLogout(state) {
-			window.location.href = "/auth?page=login";
 			state.user = null;
+			state.role = null;
+			localStorage.clear();
+			window.location.href = "/auth?page=login";
 		},
 	},
 });

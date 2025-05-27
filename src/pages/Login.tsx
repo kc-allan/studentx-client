@@ -9,7 +9,8 @@ import { AtSign, KeyRound, ArrowRight, Check, AlertCircle, Zap, User, School, Ch
 import { motion, AnimatePresence } from "framer-motion";
 import axiosInstance from "@/api/axios";
 import { setCurrentUser } from "@/state/auth";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "@/state";
 
 type LoggedInUser = {
   first_name: string;
@@ -17,10 +18,21 @@ type LoggedInUser = {
 }
 
 const AuthPage = () => {
+  const isAuthenticated = useSelector((state: RootState) => !!state.auth.user);
   const query = new URLSearchParams(useLocation().search)
-  const next = query.get('next')
   const page = query.get('page')
+  const next = query.get('next')
   const navigate = useNavigate();
+  if (isAuthenticated) {
+    toast({
+      title: "You are already logged in",
+      description: "Redirecting to home page...",
+      variant: "info",
+    });
+    navigate(next || "/");
+    return null;
+  }
+
   const dispatch = useDispatch();
   const [activeForm, setActiveForm] = React.useState<string>(page && (page.includes('login') || page.includes('signup')) ? page : "login");
   const [isSubmitting, setIsSubmitting] = React.useState<boolean>(false);
@@ -217,12 +229,7 @@ const AuthPage = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-blue-50 to-indigo-50">
-      {/* <div className="absolute top-6 left-6 z-40">
-        
-      </div> */}
-
-      <main className="flex-grow flex items-center justify-center md:p-4">
-
+      <main className="flex-grow flex md:items-center justify-center md:p-4">
         <div className={`w-full max-w-6xl flex flex-col ${activeForm === "login" ? "md:flex-row" : "md:flex-row-reverse"} overflow-hidden md:rounded-xl shadow-2xl transition-all duration-500`}>
           {/* Info Panel */}
           <div className={`w-full relative md:w-1/2 flex flex-col justify-center p-6 md:p-16 text-white ${activeForm === "login"
@@ -239,7 +246,7 @@ const AuthPage = () => {
               <div className="absolute top-0 left-0 w-full h-full bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXR0ZXJuIGlkPSJwYXR0ZXJuIiB4PSIwIiB5PSIwIiB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHBhdHRlcm5Vbml0cz0idXNlclNwYWNlT25Vc2UiIHBhdHRlcm5UcmFuc2Zvcm09InJvdGF0ZSgzMCkiPjxwYXRoIGQ9Ik0tMTAgLTEwIEwyMCAtMTAgTDIwIDIwIEwtMTAgMjAgWiIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjAuNSIgZmlsbD0ibm9uZSIvPjwvcGF0dGVybj48cmVjdCB4PSIwIiB5PSIwIiB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI3BhdHRlcm4pIi8+PC9zdmc+')]"></div>
             </div>
 
-            <div className="relative max-w-md mx-auto md:mx-0 z-10 pt-8">
+            <div className="relative max-w-md  md:mx-0 z-10 pt-8">
               <AnimatePresence mode="wait">
                 <motion.div
                   key={activeForm}
@@ -284,7 +291,7 @@ const AuthPage = () => {
           </div>
 
           {/* Form Panel */}
-          <div id="form-panel" className="w-full md:w-1/2 bg-white z-20 h-full md:max-h-[540px] overflow-y-auto shadow-lg">
+          <div id="form-panel" className="w-full md:w-1/2 bg-white z-20 h-full lg:max-h-[540px] overflow-y-auto shadow-lg">
             <div className="h-full flex flex-col justify-center p-5 md:p-12">
               <AnimatePresence mode="wait">
                 {activeForm === "login" ? (
@@ -294,7 +301,7 @@ const AuthPage = () => {
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, x: 20 }}
                     transition={{ duration: 0.3 }}
-                    className="w-full max-w-md mx-auto"
+                    className="w-full max-w-md "
                   >
                     <div className="mb-8">
                       <h2 className="text-2xl font-bold text-gray-900">Log in to your account</h2>
@@ -441,7 +448,7 @@ const AuthPage = () => {
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, x: -20 }}
                     transition={{ duration: 0.3 }}
-                    className="w-full max-w-md mx-auto"
+                    className="w-full max-w-md "
                   >
                     <div className="mb-6">
                       <h2 className="text-2xl font-bold text-gray-900">Create your account</h2>

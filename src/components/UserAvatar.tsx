@@ -10,12 +10,15 @@ const getInitials = (fullName) => {
 		.join('');
 };
 
-export default function UserAvatar({ src, alt, className }: { src: string; alt: string; className?: string }) {
+export default function UserAvatar({ src, alt, className }: { src: string; alt: string; className?: string; }) {
 	const initials = getInitials(alt);
 
 	return (
 		<Avatar
-			sx={{ width: "100%", height: "100%" }}
+			sx={{
+				width: '100%',
+				height: '100%',
+			}}
 			src={src}
 			alt={alt}
 			className={className}>

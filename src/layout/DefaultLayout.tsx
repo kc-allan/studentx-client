@@ -1,6 +1,6 @@
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
-import { RootState } from "@/state/auth";
+import { RootState } from "@/state";
 import { useContext, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { Outlet, useNavigate } from "react-router-dom";
@@ -16,17 +16,10 @@ const DefaultLayout: React.FC = () => {
 		}
 	}, [isAuthenticated, navigate]);
 	return (
-		<div className="mx-auto">
+		<div>
 			<main>
 				<Outlet />
 			</main>
-
-			<div>
-				<Footer />
-			</div>
-			{/* <!-- ===== Footer End ===== --> */}
-
-			{/* <!-- ===== Content Area End ===== --> */}
 		</div>
 
 

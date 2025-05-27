@@ -21,9 +21,14 @@ import {
 import { Search, User, Menu, X, Zap } from "lucide-react";
 import { categories } from "@/data/mockData";
 import { useDispatch, useSelector } from "react-redux";
-import { RootState, setLogout } from "@/state/auth";
+import { RootState } from "@/state";
+import { setLogout } from "@/state/auth";
 
-const Header: React.FC = () => {
+type HeaderProps = {
+  sx?: string;
+};
+
+const Header: React.FC<HeaderProps> = ({ sx }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { currentUser, isAuthenticated } = useSelector((state: RootState) => {
     return {
@@ -58,234 +63,132 @@ const Header: React.FC = () => {
   }, []);
 
   return (
-    <header className={`fixed top-0 z-50 w-full transition-all duration-300 ${isScrolled ? 'bg-background shadow-sm' : 'bg-background-subtle w-[96%] mt-4 rounded-lg backdrop-blur-sm py-2'}`}>
-      <div className="container mx-auto px-4">
+    <header className={`${sx} fixed top-0 z-50 transition-all duration-300 ${isScrolled ? 'bg-slate-100 shadow-sm w-full' : 'bg-slate-100/90 w-[96%] mt-4 rounded-xl backdrop-blur-sm'}`}>
+      <div className="container px-4 mx-auto">
         <div className="flex items-center justify-between h-16">
-          {/* Logo */}
+          {/* Logo with better visual hierarchy */}
           <Link to="/" className="flex items-center space-x-2 min-w-max">
-            <Zap className="h-6 w-6 text-brand-primary" />
-            <h1 className="text-xl font-bold text-text-primary">
+            <Zap className="h-6 w-6 text-brand-primary animate-pulse" />
+            <h1 className="text-xl font-bold text-gray-900">
               Student<span className="text-brand-primary">X</span>
             </h1>
           </Link>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-4 lg:space-x-6">
+          {/* Desktop Navigation with improved dropdowns */}
+          <nav className="hidden md:flex items-center space-x-2 lg:space-x-4">
             <NavigationMenu>
               <NavigationMenuList>
                 <NavigationMenuItem>
-                  <NavigationMenuTrigger className="text-sm lg:text-base text-text-primary hover:text-brand-primary data-[state=open]:text-brand-primary">
+                  <NavigationMenuTrigger className="text-sm lg:text-base text-gray-900 hover:text-brand-primary data-[state=open]:text-brand-primary">
                     Categories
                   </NavigationMenuTrigger>
-                  <NavigationMenuContent className="rounded-lg border border-border bg-background w-[280px] lg:w-[400px]">
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 p-4">
+                  <NavigationMenuContent className="rounded-xl border border-gray-200 bg-white w-[280px] md:w-[400px] p-4">
+                    <div className="grid grid-cols-2 gap-3 z-40">
                       {categories.map((category) => (
                         <Link
                           key={category.id}
-                          replace={false}
                           to={`/deals?filters=${category.slug}`}
-                          className="block p-3 rounded-md hover:bg-background-soft text-text-primary transition-colors text-sm lg:text-base"
+                          className="flex items-center p-3 rounded-lg hover:bg-gray-50 text-gray-800 transition-colors text-sm lg:text-base"
                         >
+                          <span className="w-8 h-8 rounded-full bg-brand-primary/10 text-brand-primary flex items-center justify-center mr-3">
+                            {(category.name[0])}
+                          </span>
                           {category.name}
                         </Link>
                       ))}
                     </div>
                   </NavigationMenuContent>
                 </NavigationMenuItem>
-                <Link
-                  to="/deals?filters=featured"
-                  className="text-sm lg:text-base font-medium text-text-primary hover:text-brand-primary transition-colors px-3 py-2 whitespace-nowrap"
-                >
-                  Featured
-                </Link>
-                <Link
-                  to="/deals?filters=new-arrivals"
-                  className="text-sm lg:text-base font-medium text-text-primary hover:text-brand-primary transition-colors px-3 py-2 whitespace-nowrap"
-                >
-                  New Deals
-                </Link>
               </NavigationMenuList>
             </NavigationMenu>
 
-            <div className="flex items-center space-x-2 lg:space-x-4">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral-light h-4 w-4" />
-                <Input
-                  type="text"
-                  placeholder="Search deals..."
-                  className="pl-10 w-32 lg:w-48 text-sm h-9 border-border focus:border-brand-primary"
-                />
-              </div>
-
-              {isAuthenticated ? (
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="hover:bg-background-soft"
-                    >
-                      <User className="h-4 w-4 text-text-primary" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent
-                    align="end"
-                    className="border-border bg-background min-w-[180px]"
-                  >
-                    <DropdownMenuLabel className="text-text-primary">
-                      {currentUser.first_name} {currentUser.last_name}
-                    </DropdownMenuLabel>
-                    <DropdownMenuSeparator className="bg-border" />
-                    <DropdownMenuItem className="hover:bg-background-soft">
-                      <Link to="/dashboard" className="w-full text-text-primary">
-                        Dashboard
-                      </Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem className="hover:bg-background-soft">
-                      <Link to="/saved" className="w-full text-text-primary">
-                        Saved Deals
-                      </Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem className="hover:bg-background-soft">
-                      <Link to="/settings" className="w-full text-text-primary">
-                        Settings
-                      </Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator className="bg-border" />
-                    <DropdownMenuItem
-                      onClick={() => {
-                        dispatch(setLogout());
-                      }}
-                      className="text-brand-danger hover:bg-red-50"
-                    >
-                      Sign Out
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              ) : (
-                <div className="flex items-center space-x-2">
-                  <Button
-                    variant="outline"
-                    onClick={() => navigate('/auth?page=login')}
-                    className="border-border text-text-primary hover:bg-background-soft whitespace-nowrap text-sm h-9 px-3"
-                  >
-                    Log In
-                  </Button>
-                  <Button
-                    onClick={() => navigate('/auth?page=signup')}
-                    className="bg-brand-primary hover:bg-brand-secondary text-text-inverted whitespace-nowrap text-sm h-9 px-3"
-                  >
-                    Sign Up
-                  </Button>
-                </div>
-              )}
-            </div>
+            <Link
+              to="/deals?filters=featured"
+              className="text-sm lg:text-base font-medium text-gray-900 hover:text-brand-primary transition-colors px-3 py-2 whitespace-nowrap"
+            >
+              Featured
+            </Link>
+            <Link
+              to="/deals?filters=new-arrivals"
+              className="text-sm lg:text-base font-medium text-gray-900 hover:text-brand-primary transition-colors px-3 py-2 whitespace-nowrap"
+            >
+              New Deals
+            </Link>
           </nav>
 
-          {/* Mobile Menu Toggle */}
-          <div className="md:hidden flex items-center">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="hover:bg-background-soft"
-            >
-              {isMenuOpen ? (
-                <X className="h-5 w-5 text-text-primary" />
-              ) : (
-                <Menu className="h-5 w-5 text-text-primary" />
-              )}
-            </Button>
-          </div>
-        </div>
+          {/* Search and Auth with better thumb zone placement */}
+          <div className="flex items-center space-x-3">
+            {/* <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+              <Input
+                type="text"
+                placeholder="Search deals..."
+                className="pl-10 w-32 lg:w-48 text-sm h-10 border-gray-300 focus:border-brand-primary rounded-lg"
+              />
+            </div> */}
 
-        {/* Mobile Menu */}
-        {isMenuOpen && (
-          <div className="md:hidden pb-4 border-t border-border">
-            <div className="flex flex-col space-y-3 mt-4">
-              <div className="relative px-2">
-                <Search className="absolute left-5 top-1/2 transform -translate-y-1/2 text-neutral-light h-4 w-4" />
-                <Input
-                  type="text"
-                  placeholder="Search deals..."
-                  className="pl-10 w-full text-sm h-10 border-border"
-                />
-              </div>
-
-              <nav className="flex flex-col space-y-1 px-2">
-                <Link
-                  to="/categories"
-                  className="px-3 py-2 rounded-md text-text-primary hover:bg-background-soft"
-                  onClick={() => setIsMenuOpen(false)}
+            {isAuthenticated ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="hover:bg-gray-100 rounded-full w-10 h-10"
+                  >
+                    <User className="h-5 w-5 text-gray-700" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent
+                  align="end"
+                  className="border-gray-200 bg-white min-w-[200px] rounded-xl shadow-lg p-2"
                 >
-                  Categories
-                </Link>
-                <Link
-                  to="/featured"
-                  className="px-3 py-2 rounded-md text-text-primary hover:bg-background-soft"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Featured Deals
-                </Link>
-                <Link
-                  to="/new"
-                  className="px-3 py-2 rounded-md text-text-primary hover:bg-background-soft"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  New Deals
-                </Link>
-              </nav>
-
-              <div className="pt-3 border-t border-border px-2">
-                {isAuthenticated ? (
-                  <>
-                    <Link
-                      to="/dashboard"
-                      className="block px-3 py-2 rounded-md text-text-primary hover:bg-background-soft"
-                      onClick={() => setIsMenuOpen(false)}
-                    >
+                  <DropdownMenuLabel className="text-gray-900 font-medium">
+                    <Link to="/me" className="w-full text-gray-700">
+                      {currentUser.first_name} {currentUser.last_name}
+                    </Link>
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator className="bg-gray-100" />
+                  {/* <DropdownMenuItem className="hover:bg-gray-50 rounded-lg">
+                    <Link to="/dashboard" className="w-full text-gray-700">
                       Dashboard
                     </Link>
-                    <Link
-                      to="/saved"
-                      className="block px-3 py-2 rounded-md text-text-primary hover:bg-background-soft"
-                      onClick={() => setIsMenuOpen(false)}
-                    >
+                  </DropdownMenuItem>
+                  <DropdownMenuItem className="hover:bg-gray-50 rounded-lg">
+                    <Link to="/saved" className="w-full text-gray-700">
                       Saved Deals
                     </Link>
-                    <button
-                      onClick={() => {
-                        dispatch(setLogout());
-                        setIsMenuOpen(false);
-                      }}
-                      className="w-full text-left px-3 py-2 rounded-md text-brand-danger hover:bg-red-50"
-                    >
-                      Sign Out
-                    </button>
-                  </>
-                ) : (
-                  <div className="flex flex-col space-y-2">
-                    <Button
-                      variant="outline"
-                      onClick={() => navigate('/auth?page=login')}
-                      className="w-full border-border text-text-primary hover:bg-background-soft"
-                    >
-                      Log In
-                    </Button>
-                    <Button
-                      onClick={() => navigate('/auth?page=signup')}
-                      className="w-full bg-brand-primary hover:bg-brand-secondary text-text-inverted"
-                    >
-                      Sign Up
-                    </Button>
-                  </div>
-                )}
+                  </DropdownMenuItem> */}
+                  <DropdownMenuSeparator className="bg-gray-100" />
+                  <DropdownMenuItem
+                    onClick={() => dispatch(setLogout())}
+                    className="text-red-600 hover:bg-red-50 rounded-lg"
+                  >
+                    Sign Out
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <div className="flex items-center space-x-2">
+                <Button
+                  variant="outline"
+                  onClick={() => navigate('/auth?page=login')}
+                  className="border-gray-300 text-gray-700 hover:bg-gray-50 whitespace-nowrap text-sm h-10 px-4 rounded-lg"
+                >
+                  Log In
+                </Button>
+                <Button
+                  onClick={() => navigate('/auth?page=signup')}
+                  className="bg-brand-primary hover:bg-brand-primary/90 text-white whitespace-nowrap text-sm h-10 px-4 rounded-lg shadow-sm"
+                >
+                  Sign Up
+                </Button>
               </div>
-            </div>
+            )}
           </div>
-        )}
+        </div>
       </div>
     </header>
+
   );
 };
 

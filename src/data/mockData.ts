@@ -1,14 +1,8 @@
 
-import { 
-  Coupon, 
-  CouponStatus, 
-  CouponType, 
-  Provider, 
-  Student, 
-  UserRole, 
-  VerificationStatus,
-  Category
-} from "@/types";
+import { Coupon, CouponStatus } from "@/types/coupon";
+import { Category } from "@/types/category";
+import { Consumer, Merchant, UserRole, VerificationStatus } from "@/types/user";
+import { OfferType } from "@/types/offer";
 
 export const categories: Category[] = [
   { id: "1", name: "Food & Drink", slug: "food-drink", iconName: "ticket", imageUrl: "https://images.pexels.com/photos/1454360/pexels-photo-1454360.jpeg?auto=compress&cs=tinysrgb&w=600" },
@@ -21,7 +15,7 @@ export const categories: Category[] = [
   { id: "8", name: "Services", slug: "services", iconName: "ticket", imageUrl: "https://images.pexels.com/photos/1337380/pexels-photo-1337380.jpeg?auto=compress&cs=tinysrgb&w=600" },
 ];
 
-export const mockProviders: Provider[] = [
+export const mockProviders: Merchant[] = [
   {
     id: "p1",
     name: "Campus Eats",
@@ -60,7 +54,7 @@ export const mockProviders: Provider[] = [
   }
 ];
 
-export const mockStudents: Student[] = [
+export const mockStudents: Consumer[] = [
   {
     id: "s1",
     name: "Alex Johnson",
@@ -94,7 +88,7 @@ export const mockCoupons: Coupon[] = [
     providerLogo: "https://images.pexels.com/photos/1454360/pexels-photo-1454360.jpeg?auto=compress&cs=tinysrgb&w=600",
     title: "25% Off Your First Order",
     description: "Get 25% off your first order with Campus Eats.",
-    type: CouponType.PERCENTAGE,
+    type: OfferType.PERCENTAGE,
     value: 25,
     minPurchase: 15,
     startDate: new Date("2023-09-01"),
@@ -115,7 +109,7 @@ export const mockCoupons: Coupon[] = [
     providerLogo: "https://images.pexels.com/photos/7657746/pexels-photo-7657746.jpeg?auto=compress&cs=tinysrgb&w=600",
     title: "$50 Off Laptops",
     description: "Save $50 on any laptop purchase over $500.",
-    type: CouponType.FIXED_AMOUNT,
+    type: OfferType.FIXED_AMOUNT,
     value: 50,
     minPurchase: 500,
     startDate: new Date("2023-08-15"),
@@ -136,7 +130,7 @@ export const mockCoupons: Coupon[] = [
     providerLogo: "https://images.pexels.com/photos/31890025/pexels-photo-31890025/free-photo-of-artistic-black-and-white-fashion-portrait-with-photos.jpeg?auto=compress&cs=tinysrgb&w=600",
     title: "30% Off Entire Purchase",
     description: "Enjoy 30% off your entire purchase at College Threads.",
-    type: CouponType.PERCENTAGE,
+    type: OfferType.PERCENTAGE,
     value: 30,
     startDate: new Date("2023-10-01"),
     endDate: new Date("2023-10-31"),
@@ -156,7 +150,7 @@ export const mockCoupons: Coupon[] = [
     providerLogo: "https://images.pexels.com/photos/1454360/pexels-photo-1454360.jpeg?auto=compress&cs=tinysrgb&w=600",
     title: "$10 Off Order",
     description: "Get $10 off any order over $30 with Campus Eats.",
-    type: CouponType.FIXED_AMOUNT,
+    type: OfferType.FIXED_AMOUNT,
     value: 10,
     minPurchase: 30,
     startDate: new Date("2023-09-15"),
@@ -177,10 +171,10 @@ export const mockCoupons: Coupon[] = [
     providerLogo: "https://images.pexels.com/photos/7657746/pexels-photo-7657746.jpeg?auto=compress&cs=tinysrgb&w=600",
     title: "20% Off Accessories",
     description: "20% off all tech accessories at Student Tech.",
-    type: CouponType.PERCENTAGE,
+    type: OfferType.PERCENTAGE,
     value: 20,
     startDate: new Date("2023-10-05"),
-    endDate: new Date("2023-12-05"),
+    endDate: new Date("2025-05-18"),
     image: "https://images.pexels.com/photos/4480460/pexels-photo-4480460.jpeg?auto=compress&cs=tinysrgb&w=600",
     totalAvailable: 1000,
     redeemedCount: 156,
@@ -197,7 +191,7 @@ export const mockCoupons: Coupon[] = [
     providerLogo: "https://images.pexels.com/photos/31890025/pexels-photo-31890025/free-photo-of-artistic-black-and-white-fashion-portrait-with-photos.jpeg?auto=compress&cs=tinysrgb&w=600",
     title: "Buy One, Get One 50% Off",
     description: "Buy one item, get another 50% off at College Threads.",
-    type: CouponType.BUY_ONE_GET_ONE,
+    type: OfferType.BUY_ONE_GET_ONE,
     value: 50,
     startDate: new Date("2023-09-20"),
     endDate: new Date("2023-10-20"),
@@ -232,7 +226,7 @@ export const getCouponById = (couponId: string): Coupon | undefined => {
 };
 
 // Helper function to get provider by ID
-export const getProviderById = (providerId: string): Provider | undefined => {
+export const getProviderById = (providerId: string): Merchant | undefined => {
   return mockProviders.find(provider => provider.id === providerId);
 };
 
@@ -242,3 +236,10 @@ export const isCouponSavedByStudent = (couponId: string, studentId: string): boo
   if (!student) return false;
   return student.savedCoupons.includes(couponId);
 };
+
+export const getSimilarOffers = (couponId: string): Offer[] => {
+  const coupon = getCouponById(couponId);
+  if (!coupon) return [];
+  
+  return mockCoupons.filter(c => c.id !== couponId && c.categories.some(cat => coupon.categories.includes(cat)));
+}

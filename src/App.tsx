@@ -5,7 +5,6 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
-import CouponDetails from "./pages/CouponDetails";
 import HowItWorks from "./pages/HowItWorks";
 import FeaturedDeals from "./pages/FeaturedDeals";
 import NewDeals from "./pages/CouponDeals";
@@ -28,6 +27,9 @@ import DefaultLayout from "./layout/DefaultLayout";
 import CouponDeals from "./pages/CouponDeals";
 import AuthPage from "./pages/Login";
 import ProtectedRoute from "./context/ProtectedRoute";
+import OfferDetails from "./pages/OfferDetails";
+import MerchantLogin from "./pages/merchant/MerchantLogin";
+import Profile from "./pages/ProfilePage";
 
 const queryClient = new QueryClient();
 
@@ -38,26 +40,30 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
-          <Route element={<DefaultLayout />}>
-            <Route path="/" element={<Index />} />
-            <Route path="/auth" element={<AuthPage />} />
-            <Route path="/categories" element={<Categories />} />
-            <Route path="/deals" element={<CouponDeals />} />
-          </Route>
+          <Route path="/" element={<Index />} />
+          <Route path="/auth" element={<AuthPage />} />
+          <Route path="/categories" element={<Categories />} />
+          <Route path="/deals" element={<CouponDeals />} />
 
           {/* Main public routes */}
           <Route element={<DefaultLayout />}>
 
-            <Route path="/coupon/:id" element={
-              <ProtectedRoute allowedRoles={["student"]}>
-                <CouponDetails />
+            <Route path="/offer/:id" element={
+              <ProtectedRoute allowedRoles={["consumer"]}>
+                <OfferDetails />
+              </ProtectedRoute>
+            } />
+            <Route path="/me" element={
+              <ProtectedRoute allowedRoles={["consumer"]}>
+                <Profile />
               </ProtectedRoute>
             } />
             <Route path="/how-it-works" element={<HowItWorks />} />
-            <Route path="/featured" element={<FeaturedDeals />} />
-            <Route path="/signup" element={<SignUp />} />
           </Route>
+
+
           {/* Merchant routes */}
+          <Route path="/merchant/login" element={<MerchantLogin />} />
           <Route path="/merchant" element={<MerchantDashboard />} />
           <Route path="/merchant/coupons" element={<MerchantCoupons />} />
           <Route path="/merchant/stores" element={<MerchantStores />} />
