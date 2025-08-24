@@ -1,5 +1,4 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
@@ -8,7 +7,6 @@ import {
   CheckCircle,
   AlertCircle,
   XCircle,
-  Mail,
   School,
   Shield,
   Clock,
@@ -16,8 +14,13 @@ import {
   Award,
   GraduationCap,
   ExternalLink,
-  RefreshCw
+  RefreshCw,
+  Info
 } from "lucide-react";
+import { Link } from 'react-router-dom';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '../ui/dialog';
+import StudentVerificationModal from '../verification/ManualVerificationModal';
+import { LinearProgress } from '@mui/material';
 
 interface VerificationTasksProps {
   onChangeTab?: (tab: string) => void;
@@ -27,41 +30,209 @@ interface VerificationTasksProps {
     email: string;
     phone: string;
     university: string;
+    firstName: string;
+    lastName: string;
+    birthDate?: string;
+    verificationStatus: 'pending' | 'in_progress' | 'requested' | 'completed' | 'failed' | 'rejected';
   };
 }
 
-export const VerificationTasks: React.FC<VerificationTasksProps> = ({ user, onChangeTab }) => {
-  const [verificationStatus, setVerificationStatus] = useState<'pending' | 'in_progress' | 'completed' | 'failed'>('pending');
+declare global {
+  interface Window {
+    SheerID?: any;
+    _sheerid?: any;
+  }
+}
 
+export const VerificationTasks: React.FC<VerificationTasksProps> = ({ user, onChangeTab }) => {
+  const [verificationStatus, setVerificationStatus] = useState<'pending' | 'in_progress' | 'requested' | 'completed' | 'failed' | 'rejected'>(
+    user.verificationStatus
+  );
+  console.log(user);
+
+  const [sheerIdLoaded, setSheerIdLoaded] = useState(false);
+  const [verificationError, setVerificationError] = useState<string | null>(null);
+  const [retryCount, setRetryCount] = useState(0);
+  const [sheerIdForm, setSheerIdForm] = useState<any>(null);
+  const [openModalManualVerification, setOpenModalManualVerification] = useState(false);
+
+  // Load SheerID script dynamically
+  // Fixed initializeSheerID function
+  const initializeSheerID = () => {
+    // Check if SheerID is available - it should be the default export
+    if (!window.SheerID && !window._sheerid) {
+      setVerificationStatus('failed');
+      setVerificationError('Verification service unavailable. Please try again later.');
+      return;
+    }
+    console.log(window)
+
+    try {
+      // Use the correct SheerID API - it's likely a default export with loadInModal method
+      const SheerIDLib = window.SheerID || window._sheerid;
+
+      // For modal implementation, use loadInModal instead of loadInlineIframe
+      const form = SheerIDLib.loadInModal(
+        `${import.meta.env.VITE_SHEERID_PROGRAM_URL}`, // Your SheerID program URL
+        {
+          mobileRedirect: false, // Keep modal on mobile
+          closeButtonText: 'Close', // Optional close button text
+          mobileThreshold: 768, // Mobile breakpoint
+          stopPropagation: true
+        }
+      );
+
+      // Set initial view model with user data
+      form.setViewModel({
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        phoneNumber: user.phone,
+        birthDate: user.birthDate || '',
+        metadata: {
+          userId: "user.id" // Replace with actual user ID from your system
+        }
+      });
+
+      // Set up event hooks
+      form.on('ON_VERIFICATION_SUCCESS', (verificationResponse) => {
+
+        setVerificationStatus('completed');
+        // Here you would typically send the verification result to your backend
+      });
+
+      form.on('ON_VERIFICATION_READY', () => {
+
+      });
+
+      form.on('ON_VERIFICATION_STEP_CHANGE', (verificationResponse) => {
+
+      });
+
+      form.on('ON_FORM_LOCALE_CHANGE', (locale) => {
+
+      });
+
+      form.on('ON_VERIFICATION_ERROR', (error) => {
+
+        setVerificationStatus('failed');
+        setVerificationError(error.message || 'Verification failed. Please check your information and try again.');
+      });
+
+      setSheerIdForm(form);
+
+    } catch (error) {
+      console.error('Error initializing SheerID:', error);
+      setVerificationStatus('failed');
+      setVerificationError('Failed to initialize verification service.');
+    }
+  };
+
+  // Also update the script loading useEffect
+  useEffect(() => {
+    if (verificationStatus === 'in_progress' && sheerIdLoaded) {
+      // First check if already loaded
+      if (window.SheerID || window._sheerid) {
+        setSheerIdLoaded(true);
+        initializeSheerID();
+        return;
+      }
+
+      const script = document.createElement('script');
+      script.src = 'https://cdn.jsdelivr.net/npm/@sheerid/jslib@2/sheerid-install.js';
+      script.id = 'sheerid-js';
+      script.type = 'module'; // Important: keep as module
+      script.async = true;
+
+      // Load CSS as well
+      const link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = 'https://cdn.jsdelivr.net/npm/@sheerid/jslib@2/sheerid-install.css';
+      link.type = 'text/css';
+      link.crossOrigin = 'anonymous';
+      document.head.appendChild(link);
+
+      script.onload = () => {
+        // Add a small delay to ensure the module is fully loaded
+        setTimeout(() => {
+          setSheerIdLoaded(true);
+          initializeSheerID();
+        }, 100);
+      };
+
+      script.onerror = () => {
+        setVerificationStatus('failed');
+        setVerificationError('Failed to load verification service. Please try again later.');
+      };
+
+      document.head.appendChild(script); // Append to head instead of body for modules
+
+      return () => {
+        const existingScript = document.getElementById('sheerid-js');
+        if (existingScript && existingScript.parentNode) {
+          existingScript.parentNode.removeChild(existingScript);
+        }
+        if (link && link.parentNode) {
+          link.parentNode.removeChild(link);
+        }
+      };
+    }
+  }, [verificationStatus, sheerIdLoaded]);
+
+  const handleStudentVerification = () => {
+    setVerificationError(null);
+    setRetryCount(prev => prev + 1);
+    if (!window.SheerID && !window._sheerid) {
+      // setVerificationStatus('in_progress');
+      setOpenModalManualVerification(true);
+    } else {
+      initializeSheerID();
+    }
+  };
+
+  const handleVerificationSubmit = (data: any) => {
+    // Handle the form submission logic here
+    console.log('Manual verification submitted:', data);
+    setOpenModalManualVerification(false);
+    setVerificationStatus('in_progress');
+    // You can also call initializeSheerID() here if needed
+  };
+
+  const handleVerificationResubmit = (data: any) => {
+    // Handle the form resubmission logic here
+    console.log('Manual verification resubmitted:', data);
+    setOpenModalManualVerification(false);
+    setVerificationStatus('in_progress');
+    // You can also call initializeSheerID() here if needed
+  };
+
+  // Rest of your component remains the same...
   const verificationSteps = [
     {
       id: 'profile_completion',
       title: 'Complete Profile',
-      description: 'Add your university and graduation year information',
+      description: 'Add student information on your profile to continue with verification',
       icon: School,
-      status: 'pending',
+      status: user.verificationLevel >= 90 ? 'completed' : 'pending',
       points: 15,
       required: false
     },
-    // {
-    //   id: 'email',
-    //   title: 'Verify University Email',
-    //   description: 'Confirm your .edu email address to begin verification',
-    //   icon: Mail,
-    //   status: 'completed',
-    //   points: 25,
-    //   required: true
-    // },
     {
-      id: 'sheerid_verification',
+      id: 'student_verification',
       title: 'Student Status Verification',
-      description: 'Complete identity verification through our secure partner SheerID',
+      description:
+        verificationStatus === 'pending'
+          ? 'Complete identity verification. To verify your student status.'
+          : verificationStatus === 'in_progress' ? 'Identity verification is in progress'
+          : verificationStatus === 'requested' ? 'More information has been requested by our team'
+            : verificationStatus === 'failed' ? 'Identity verification failed'
+            : verificationStatus === 'completed' ? 'Your student status has been verified'
+              : 'Your verification request was rejected.',
       icon: GraduationCap,
       status: verificationStatus,
       points: 50,
       required: true
     },
-
   ];
 
   const getStatusIcon = (status: string) => {
@@ -89,6 +260,8 @@ export const VerificationTasks: React.FC<VerificationTasksProps> = ({ user, onCh
         return 'bg-warning/10 text-warning border-warning/20';
       case 'failed':
         return 'bg-destructive/10 text-destructive border-destructive/20';
+      case 'rejected':
+        return 'bg-destructive/10 text-destructive border-destructive/20';
       default:
         return 'bg-neutral-lighter text-neutral-medium border-neutral-lighter';
     }
@@ -100,61 +273,32 @@ export const VerificationTasks: React.FC<VerificationTasksProps> = ({ user, onCh
   );
   const maxPoints = verificationSteps.reduce((sum, step) => sum + step.points, 0);
 
-
-  const handleSheerIDVerification = async () => {
-    setVerificationStatus('in_progress');
-
-    try {
-      // @ts-ignore
-      const sheerId = await import('https://cdn.jsdelivr.net/npm/@sheerid/jslib@2/sheerid-install.js');
-
-      const userId = '216b5d06-ce3f-4d2e-83f4-9694791cf65d'; // Replace with actual user ID
-      const prefillParams = new URLSearchParams({
-        "first-name": "John",
-        "last-name": "Doe",
-        "email": "john@example.com",
-      }).toString();
-      sheerId.default.loadInModal(
-        `https://services.sheerid.com/verify/681c4612419b11377be7f69e/?userId=${userId}&${prefillParams}&email=user@example.com`,
-        {
-          mobileRedirect: false,
-          closeButtonText: "Close",
-          metadata: {
-            userId: "216b5d06-ce3f-4d2e-83f4-9694791cf65d",
-            verificationType: "student",
-          },
-          prefill: {
-            "first-name": "John",  // Use kebab-case
-            "last-name": "Doe",   // Use kebab-case
-            "email": "john@example.com",
-            "birth-date": "1990-01-01",  // Format: YYYY-MM-DD
-            "schoolName": "Harvard University", // Some keys may be camelCase
-          },
-          redirectUrl: `https://1bjd0zgg-4000.uks1.devtunnels.ms/sheerid/callback?userId=${userId}`,
-        }
-      );
-      sheerId.conversion.convert({ amount: "XX.XX" });
-    } catch (error) {
-      console.error("SheerID failed to load:", error);
-      setVerificationStatus('failed');
-    }
-  };
-
-
-
   return (
     <div className="space-y-6">
-      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@sheerid/jslib@2/sheerid-install.css" type="text/css" />
+      {/* Manual Verification Modal */}
+      <Dialog open={openModalManualVerification} onOpenChange={setOpenModalManualVerification}>
+        <StudentVerificationModal
+          student={user}
+          isOpen={openModalManualVerification}
+          onClose={() => setOpenModalManualVerification(false)}
+          currentStatus={{
+            status: verificationStatus as 'not_submitted' | 'pending' | 'approved' | 'rejected' | 'info_requested',
+          }}
+          onSubmit={handleVerificationSubmit}
+          onResubmit={handleVerificationResubmit}
+        />
+      </Dialog>
+
       {/* Progress Overview */}
       <Card className="border-neutral-lighter">
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle className="flex items-center gap-2">
+              <CardTitle className="flex items-center gap-2 text-lg">
                 <Shield className="h-5 w-5 text-brand-primary" />
                 Student Identity Verification
               </CardTitle>
-              <CardDescription>
+              <CardDescription className='text-xs text-neutral-medium'>
                 Verify your student status to access exclusive deals
               </CardDescription>
             </div>
@@ -167,13 +311,12 @@ export const VerificationTasks: React.FC<VerificationTasksProps> = ({ user, onCh
         <CardContent>
           <div className="space-y-4">
             <div>
-              <div className="flex justify-between items-center">
+              <div className="flex justify-center items-center gap-2">
                 <span className="text-sm font-medium">Verification Progress</span>
                 <span className="text-sm text-neutral-medium">
                   {completedSteps}/{verificationSteps.length} completed
                 </span>
               </div>
-              <Progress value={(completedSteps / verificationSteps.length) * 100} className="h-3" />
             </div>
             {completedSteps === verificationSteps.length ? (
               <div className="text-success text-sm font-medium">
@@ -199,7 +342,6 @@ export const VerificationTasks: React.FC<VerificationTasksProps> = ({ user, onCh
                 </div>
               </div>
             )}
-
           </div>
         </CardContent>
       </Card>
@@ -220,12 +362,14 @@ export const VerificationTasks: React.FC<VerificationTasksProps> = ({ user, onCh
 
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-3 mb-2">
-                      <h3 className="font-semibold text-text-primary">{step.title}</h3>
+                      <h3 className="font-semibold text-text-primary text-base">{step.title}</h3>
                       <Badge className={getStatusColor(step.status)}>
                         {step.status === 'completed' && 'Completed'}
                         {step.status === 'in_progress' && 'In Progress'}
                         {step.status === 'pending' && 'Pending'}
                         {step.status === 'failed' && 'Failed'}
+                        {step.status === 'rejected' && 'Rejected'}
+                        {step.status === 'requested' && 'Requested'}
                       </Badge>
                       {step.required && (
                         <Badge variant="outline" className="text-xs">Required</Badge>
@@ -234,17 +378,17 @@ export const VerificationTasks: React.FC<VerificationTasksProps> = ({ user, onCh
 
                     <p className="text-neutral-medium text-sm mb-4">{step.description}</p>
 
-                    {step.id === 'profile_completion' && (
+                    {step.id === 'profile_completion' && step.status === 'pending' && (
                       <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
                         <div className="flex items-start gap-3">
                           <Shield className="h-5 w-5 text-blue-600 mt-0.5" />
                           <div>
                             <h4 className="font-medium text-blue-900 mb-1">Complete Your Profile</h4>
                             <p className="text-sm text-blue-700 mb-3">
-                              Add required data onm your profile to continue with your verification.
+                              Add required data on your profile to continue with your verification.
                             </p>
                             <Button
-                              onClick={() => onChangeTab('account')} // Replace with actual profile completion logic
+                              onClick={() => onChangeTab?.('account')}
                               className="bg-blue-600 hover:bg-blue-700 text-white"
                             >
                               Complete Profile
@@ -254,38 +398,48 @@ export const VerificationTasks: React.FC<VerificationTasksProps> = ({ user, onCh
                       </div>
                     )}
 
-                    {step.id === 'sheerid_verification' && step.status === 'pending' && (
+                    {step.id === 'student_verification' && step.status === 'pending' && (
                       <div className="space-y-3">
                         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
                           <div className="flex items-start gap-3">
                             <Shield className="h-5 w-5 text-blue-600 mt-0.5" />
                             <div>
-                              <h4 className="font-medium text-blue-900 mb-1">Secure Verification with SheerID</h4>
+                              <h4 className="font-medium text-blue-900 mb-1 text-base">Secure Student Verification</h4>
                               <p className="text-sm text-blue-700 mb-3">
-                                We partner with SheerID, a trusted third-party verification service, to securely confirm your student status. Your personal information is protected and never stored by us.
+                                Securely confirm your student status through our verification system. Your personal information is protected and never stored by us.
                               </p>
-                              <Button
-                                onClick={handleSheerIDVerification}
-                                id="modal-button"
-                                className="modal-button bg-blue-600 hover:bg-blue-700 text-white"
-                              >
-                                <ExternalLink className="h-4 w-4 mr-2" />
-                                Start Verification
-                              </Button>
+                              <div className="flex flex-col sm:flex-row gap-3">
+                                <Button
+                                  onClick={handleStudentVerification}
+                                  id="student-verify-button"
+                                  className="bg-blue-600 hover:bg-blue-700 text-white"
+                                >
+                                  <ExternalLink className="h-4 w-4 mr-2" />
+                                  Start Verification
+                                </Button>
+                                {/* <Button variant="outline" className="border-blue-300 text-blue-700 hover:bg-blue-50">
+                                  <Info className="h-4 w-4 mr-2" />
+                                  Learn More
+                                </Button> */}
+                              </div>
                             </div>
                           </div>
+                        </div>
+                        <div className="text-xs text-neutral-500">
+                          By verifying, you agree to our Terms of Service and Privacy Policy.
                         </div>
                       </div>
                     )}
 
-                    {step.id === 'sheerid_verification' && step.status === 'in_progress' && (
+
+                    {step.id === 'student_verification' && step.status === 'in_progress' && (
                       <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
                         <div className="flex items-center gap-3">
                           <RefreshCw className="h-5 w-5 text-yellow-600 animate-spin" />
                           <div>
                             <h4 className="font-medium text-yellow-900">Verification in Progress</h4>
                             <p className="text-sm text-yellow-700">
-                              Your verification is being processed. This typically takes 1-2 minutes.
+                              Your verification is being processed.
                             </p>
                           </div>
                         </div>
@@ -295,26 +449,67 @@ export const VerificationTasks: React.FC<VerificationTasksProps> = ({ user, onCh
                     {step.status === 'completed' && (
                       <div className="flex items-center gap-2 text-sm text-success">
                         <CheckCircle className="h-4 w-4" />
-                        <span>Verification complete</span>
+                        {step.id === 'student_verification' ? (
+                          <span>Student status verified through Student</span>
+                        ) : (
+                          <span>Profile completed</span>
+                        )}
                       </div>
                     )}
 
-                    {step.status === 'failed' && (
+                    {step.id === 'student_verification' && step.status === 'requested' && (
+                      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                        <div className="flex items-start gap-3">
+                          <Info className="h-5 w-5 text-blue-600 mt-0.5" />
+                          <div>
+                            <h4 className="font-medium text-blue-900 mb-1">More Information Requested</h4>
+                            <p className="text-sm text-blue-700 mb-3">
+                              Our team has requested additional information to complete your verification. Please check your email for details.
+                            </p>
+                            <Button
+                              onClick={() => setOpenModalManualVerification(true)}
+                              className="bg-blue-600 hover:bg-blue-700 text-white"
+                            >
+                              Provide Info
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {(step.status === 'failed' || step.status === 'rejected') && (
                       <div className="bg-red-50 border border-red-200 rounded-lg p-4">
                         <div className="flex items-start gap-3">
                           <XCircle className="h-5 w-5 text-red-600 mt-0.5" />
                           <div>
-                            <h4 className="font-medium text-red-900 mb-1">Verification Failed</h4>
-                            <p className="text-sm text-red-700 mb-3">
-                              We couldn't verify your student status. Please try again or contact support for assistance.
+                            <h4 className="font-medium text-red-900 mb-1 text-lg">
+                              {step.status === 'rejected' ? 'Verification Rejected' : 'Verification Failed'}
+                            </h4>
+                            <p className="text-xs text-red-700 mb-3">
+                              {step.status === 'rejected'
+                                ? 'Your verification request was rejected. Please check your email for more details.'
+                                : verificationError || 'We couldn\'t verify your student status. Please try again or contact support for assistance.'}
                             </p>
-                            <Button
-                              onClick={handleSheerIDVerification}
-                              variant="outline"
-                              className="border-red-300 text-red-700 hover:bg-red-50"
-                            >
-                              Try Again
-                            </Button>
+                            <div className="flex flex-col sm:flex-row gap-3">
+                              <Button
+                                onClick={handleStudentVerification}
+                                variant="outline"
+                                className="border-red-300 text-red-700 hover:bg-red-50"
+                                disabled={retryCount >= 3}
+                              >
+                                {retryCount >= 3 ? 'Max attempts reached' : 'Try Again'}
+                              </Button>
+                              <Link to="mailto:support@studentx.co.ke?subject=Verification Assistance">
+                                <Button variant="outline" className="border-neutral-300">
+                                  Contact Support
+                                </Button>
+                              </Link>
+                            </div>
+                            {retryCount >= 3 && (
+                              <p className="text-xs text-red-600 mt-2">
+                                You've reached the maximum number of attempts. Please contact support for assistance.
+                              </p>
+                            )}
                           </div>
                         </div>
                       </div>
@@ -335,7 +530,7 @@ export const VerificationTasks: React.FC<VerificationTasksProps> = ({ user, onCh
       {/* Benefits Card */}
       <Card className="border-brand-primary/20 bg-gradient-to-r from-brand-primary/5 to-brand-accent/5">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+          <CardTitle className="flex items-center gap-2 text-lg">
             <Award className="h-5 w-5 text-brand-primary" />
             Student Verification Benefits
           </CardTitle>
@@ -343,7 +538,7 @@ export const VerificationTasks: React.FC<VerificationTasksProps> = ({ user, onCh
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <h4 className="font-medium text-text-primary">Unlock Exclusive Access</h4>
+              <h4 className="font-medium text-text-primary text-base">Unlock Exclusive Access</h4>
               <ul className="text-sm text-neutral-medium space-y-1">
                 <li>• Access to verified student deals</li>
                 <li>• Higher discount percentages</li>
@@ -351,9 +546,9 @@ export const VerificationTasks: React.FC<VerificationTasksProps> = ({ user, onCh
               </ul>
             </div>
             <div className="space-y-2">
-              <h4 className="font-medium text-text-primary">Trusted & Secure</h4>
+              <h4 className="font-medium text-text-primary text-base">Trusted & Secure</h4>
               <ul className="text-sm text-neutral-medium space-y-1">
-                <li>• Verified by SheerID</li>
+                <li>• Verified by our trusted team</li>
                 <li>• Your data stays secure</li>
                 <li>• Instant verification process</li>
               </ul>

@@ -14,6 +14,7 @@ export interface Offer {
 	discountType: OfferType;
 	discountValue: number;
 	currency: string;
+	isSaved: boolean;
 	merchant: {
 		id: string;
 		name: string;

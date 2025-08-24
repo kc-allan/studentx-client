@@ -32,9 +32,13 @@ export interface Consumer extends User {
 }
 
 export interface Merchant extends User {
+	id: string;
 	name: string;
 	logo?: string;
 	website?: string;
+	city?: string;
+	country?: string;
+	zipCode?: string;
 	isApproved?: boolean;
 	rating?: number;
 	categories: string[];

@@ -2,11 +2,14 @@ import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search, Zap, BookOpen, Coffee, Tag, TrendingUp, Award, ShieldCheck, BadgeCheck } from "lucide-react";
-// import Head from "next/head";
+import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { RootState } from "@/state";
 
 const Hero = () => {
   const [searchQuery, setSearchQuery] = React.useState("");
   const popularSearches = ["Apple", "Nike", "Spotify", "Adobe", "Uber Eats"];
+  const isAuthenticated = useSelector((state: RootState) => !!state.auth.user);
 
   return (
     <>
@@ -43,24 +46,33 @@ const Hero = () => {
                   <Search className="h-5 w-5 text-neutral-400" />
                 </div>
                 <Input
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      const searchUrl = `/deals?search=${encodeURIComponent(searchQuery)}`;
+                      window.location.href = searchUrl;
+                    }
+                  }}
                   type="text"
-                  className="block w-full pl-10 pr-4 py-6 bg-white/5 border border-neutral-400 rounded-lg text-white focus:outline-none focus:ring-1 focus:ring-neutral-400 placeholder-neutral-400"
+                  className="block w-full pl-10 pr-4 py-6 bg-white/5 border-neutral-400 rounded-lg text-white ring-0 outline-none placeholder-neutral-400"
                   placeholder="Search for brands or categories..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
                 <div className="absolute right-2 top-1/2 transform -translate-y-1/2">
-                  <Button className="bg-brand-primary hover:bg-brand-primary/70 text-white font-medium rounded-lg px-4 py-2">
-                    Search
+                  <Button disabled={searchQuery.length < 1} className="bg-brand-primary hover:bg-brand-primary/70 text-white font-medium rounded-lg px-4 py-2">
+                    <Link to={`/deals?search=${encodeURIComponent(searchQuery)}`} className="flex items-center gap-2">
+                      Search
+                    </Link>
                   </Button>
                 </div>
               </div>
 
               <div className="flex flex-wrap items-center gap-2 mt-2">
                 <span className="text-sm text-neutral-400">Popular Searches: </span>
-                {popularSearches.map((search) => (
+                {popularSearches.map((search, index) => (
                   <button
-                    key={search}
+                    key={index}
                     onClick={() => setSearchQuery(search)}
                     className="text-sm text-neutral-300 hover:text-white px-2 py-1 rounded-md hover:bg-white/10 transition-colors"
                   >
@@ -70,31 +82,33 @@ const Hero = () => {
               </div>
 
               {/* CTA buttons */}
-              <div className="flex flex-col sm:flex-row gap-4 mt-8">
-                <Button asChild size="lg" className="bg-gradient-to-r from-brand-primary to-brand-primary/70 hover:from-brand-primary/70 hover:to-brand-primary text-white font-bold rounded-lg shadow-lg shadow-emerald-500/20 transition-all duration-300">
-                  <a href="/auth?page=signup">Get Started — It's Free</a>
-                </Button>
-                <Button
-                  onClick={() => {
-                    const element = document.getElementById("how-it-works");
-                    if (element) {
-                      element.scrollIntoView({ behavior: "smooth" });
-                    }
-                  }}
-                  asChild
-                  size="lg"
-                  variant="outline"
-                  className="cursor-pointer border-white/30 bg-transparent text-white hover:bg-white/10 hover:border-white/50 transition-all duration-300 rounded-lg"
-                >
-                  <span className="flex items-center gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <circle cx="12" cy="12" r="10"></circle>
-                      <polygon points="10 8 16 12 10 16 10 8"></polygon>
-                    </svg>
-                    See How It Works
-                  </span>
-                </Button>
-              </div>
+              {!isAuthenticated && (
+                <div className="flex flex-col sm:flex-row gap-4 mt-8">
+                  <Button asChild size="lg" className="bg-gradient-to-r from-brand-primary to-brand-primary/70 hover:from-brand-primary/70 hover:to-brand-primary text-white font-bold rounded-lg shadow-lg shadow-emerald-500/20 transition-all duration-300">
+                    <a href="/auth?page=signup">Get Started — It's Free</a>
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      const element = document.getElementById("how-it-works");
+                      if (element) {
+                        element.scrollIntoView({ behavior: "smooth" });
+                      }
+                    }}
+                    asChild
+                    size="lg"
+                    variant="outline"
+                    className="cursor-pointer border-white/30 bg-transparent text-white hover:bg-white/10 hover:border-white/50 transition-all duration-300 rounded-lg"
+                  >
+                    <span className="flex items-center gap-2">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polygon points="10 8 16 12 10 16 10 8"></polygon>
+                      </svg>
+                      See How It Works
+                    </span>
+                  </Button>
+                </div>
+              )}
 
               {/* Trust badges */}
               <div className="mt-8 flex flex-col gap-4">
@@ -113,7 +127,7 @@ const Hero = () => {
                   </div>
                 </div>
 
-                <div className="flex flex-wrap gap-6 items-center">
+                {/* <div className="flex flex-wrap gap-6 items-center">
                   <img
                     alt="Google"
                     className="h-6 opacity-80 hover:opacity-100 transition-opacity"
@@ -144,7 +158,7 @@ const Hero = () => {
                     src="https://upload.wikimedia.org/wikipedia/commons/1/19/Spotify_logo_without_text.svg"
                     loading="lazy"
                   />
-                </div>
+                </div> */}
               </div>
             </div>
 
@@ -153,7 +167,7 @@ const Hero = () => {
               <div className="absolute -top-6 -right-6 w-32 h-32 bg-emerald-500/20 rounded-full blur-2xl"></div>
               <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-emerald-500/20 rounded-full blur-2xl"></div>
 
-              <div className="relative bg-white/5 backdrop-blur-lg rounded-2xl p-6 shadow-2xl border border-white/10 overflow-hidden">
+              <div className="relative bg-white/5 backdrop-blur-lg rounded-2xl px-1 py-2 shadow-2xl border border-white/10 overflow-hidden">
                 {/* Quick stats */}
                 <div className="hidden relative bg-gradient-to-r from-emerald-500/10 to-emerald-600/10 rounded-xl p-6 text-center overflow-hidden">
                   <div className="absolute -right-10 -top-10 w-32 h-32 bg-emerald-500/10 rounded-full blur-xl"></div>
@@ -174,7 +188,7 @@ const Hero = () => {
                 </div>
 
                 {/* Benefit cards with images */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full mt-6">
                   <BenefitCard
                     image="https://images.unsplash.com/photo-1633356122544-f134324a6cee?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8c29mdHdhcmUlMjBkaXNjb3VudHxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=500&q=60"
                     title="Tech & Software"
@@ -202,7 +216,7 @@ const Hero = () => {
                 </div>
 
                 {/* Trust indicators */}
-                <div className="mt-6 flex flex-col items-center gap-2 text-sm text-neutral-300 bg-white/5 rounded-lg p-3 border border-white/10">
+                <div className="mt-6 mx-2 flex flex-col items-center gap-2 text-sm text-neutral-300 bg-white/5 rounded-lg p-3 border border-white/10">
                   <div className="flex items-center gap-2">
                     <div className="flex items-center justify-center w-8 h-8 bg-emerald-500/10 rounded-full">
                       <ShieldCheck className="h-4 w-4 text-emerald-400" />
@@ -227,7 +241,7 @@ const Hero = () => {
 };
 
 const BenefitCard = ({ image, title, description, stats }) => (
-  <div className="group relative overflow-hidden rounded-xl hover:shadow-lg hover:shadow-emerald-500/10 transition-all duration-300 border border-white/10">
+  <div className="group w-full relative overflow-hidden rounded-xl hover:shadow-lg hover:shadow-emerald-500/10 transition-all duration-300 border border-white/10">
     <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-black/30 z-10"></div>
     <img
       src={image}
@@ -238,10 +252,11 @@ const BenefitCard = ({ image, title, description, stats }) => (
     <div className="absolute bottom-0 left-0 p-4 z-20 w-full">
       <div className="flex justify-between items-end">
         <div>
-          <h3 className="font-bold text-white">{title}</h3>
+
+          <h3 className="text-xl font-bold text-white mb-2">{title}</h3>
           <p className="text-sm text-neutral-300">{description}</p>
         </div>
-        <span className="text-xs bg-emerald-500/20 text-emerald-400 px-2 py-1 rounded-full">{stats}</span>
+        {/* <span className="text-xs bg-emerald-500/20 text-emerald-400 px-2 py-1 rounded-full">{stats}</span> */}
       </div>
     </div>
   </div>

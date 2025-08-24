@@ -19,27 +19,67 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Search, User, Menu, X, Zap } from "lucide-react";
-import { categories } from "@/data/mockData";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/state";
 import { setLogout } from "@/state/auth";
+import { toast } from "@/hooks/use-toast";
+import axiosInstance from "@/api/axios";
+import { Category } from "@/types/category";
+import ServerError from "./ServerError";
 
 type HeaderProps = {
   sx?: string;
 };
 
 const Header: React.FC<HeaderProps> = ({ sx }) => {
+  const [categories, setCategories] = useState<Category[]>([]);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { currentUser, isAuthenticated } = useSelector((state: RootState) => {
-    return {
-      currentUser: state.auth.user,
-      isAuthenticated: !!state.auth.user,
-    };
-  });
+  const currentUser = useSelector((state: RootState) => state.auth.user);
+  const isAuthenticated = useSelector(
+    (state: RootState) => !!state.auth.user
+  );
   const [isScrolled, setIsScrolled] = useState(false);
+  const [fetchingCategories, setFetchingCategories] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [categoryError, setCategoryError] = useState<{
+    title: string;
+    description: string;
+  } | null>(null);
+
+  const fetchCategories = async () => {
+    try {
+      setCategoryError(null);
+      setFetchingCategories(true);
+      const response = await axiosInstance.get('/offer/categories');
+      if (response.status !== 200) {
+        throw new Error(response.data.message || "Failed to fetch categories");
+      }
+      setCategories(response.data.data);
+    } catch (error) {
+
+      // If status is 5xx, set categoryError with a generic message
+      if (error.response && error.response.status >= 500) {
+        setCategoryError({
+          title: error.response?.data?.message || error.message || "Internal Server Error",
+          description: error.response?.data?.description || "Something went wrong while fetching categories. Please try again or contact support.",
+        });
+      } else {
+        toast({
+          title: error.response?.data?.message || error.message || "Error fetching categories",
+          description: error.response?.data?.description || "Something went wrong",
+          variant: "warning",
+        });
+      }
+
+    } finally {
+      setFetchingCategories(false);
+    }
+  }
+  useEffect(() => {
+    fetchCategories();
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -84,10 +124,22 @@ const Header: React.FC<HeaderProps> = ({ sx }) => {
                   </NavigationMenuTrigger>
                   <NavigationMenuContent className="rounded-xl border border-gray-200 bg-white w-[280px] md:w-[400px] p-4">
                     <div className="grid grid-cols-2 gap-3 z-40">
-                      {categories.map((category) => (
+                      {categoryError ? (
+                        <div className="text-center text-red-600 col-span-2">
+                          <ServerError title={categoryError.title} description={categoryError.description} onRetry={fetchCategories} />
+                        </div>
+                      ) : categories.length === 0 && fetchingCategories ? (
+                        <div className="text-center text-gray-500 col-span-2">
+                          Loading categories...
+                        </div>
+                      ) : categories.length === 0 ? (
+                        <div className="text-center text-gray-500 col-span-2">
+                          No categories available
+                        </div>
+                      ) : categories.map((category) => (
                         <Link
                           key={category.id}
-                          to={`/deals?filters=${category.slug}`}
+                          to={`/deals?filters=${category.id}`}
                           className="flex items-center p-3 rounded-lg hover:bg-gray-50 text-gray-800 transition-colors text-sm lg:text-base"
                         >
                           <span className="w-8 h-8 rounded-full bg-brand-primary/10 text-brand-primary flex items-center justify-center mr-3">
@@ -103,17 +155,17 @@ const Header: React.FC<HeaderProps> = ({ sx }) => {
             </NavigationMenu>
 
             <Link
-              to="/deals?filters=featured"
+              to="/deals"
               className="text-sm lg:text-base font-medium text-gray-900 hover:text-brand-primary transition-colors px-3 py-2 whitespace-nowrap"
             >
-              Featured
+              Browse Offers
             </Link>
-            <Link
-              to="/deals?filters=new-arrivals"
+            {/* <Link
+              to="/deals"
               className="text-sm lg:text-base font-medium text-gray-900 hover:text-brand-primary transition-colors px-3 py-2 whitespace-nowrap"
             >
               New Deals
-            </Link>
+            </Link> */}
           </nav>
 
           {/* Search and Auth with better thumb zone placement */}

@@ -20,33 +20,36 @@ const SignUpBanner = () => {
               <Zap className="h-4 w-4 mr-2 fill-current" />
               Exclusive Student Offers
             </div>
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-text-inverted mb-4">
+            <h2 className="text-xl md:text-2xl lg:text-3xl font-bold text-text-inverted mb-4">
               Start Saving Today
             </h2>
-            <p className="text-text-inverted/90 text-lg">
+            <p className="text-text-inverted/90 text-base">
               Join our community of students enjoying exclusive discounts on brands you love.
             </p>
           </div>
-          
+
           <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
-            <Button 
-              asChild 
-              size="lg" 
+            <Button
+              asChild
+              size="lg"
               className="bg-background text-brand-primary hover:bg-background-soft hover:text-brand-primary px-8 py-6"
             >
-              <Link to="/signup" className="flex items-center">
+              <Link to="/auth?page=signup" className="flex items-center">
                 Sign Up Free <ArrowRight className="ml-2 h-5 w-5" />
               </Link>
             </Button>
-            <Button 
-              asChild 
-              size="lg" 
-              variant="outline" 
+            <Button
+              onClick={() => {
+                document.getElementById("how-it-works")?.scrollIntoView({ behavior: "smooth" });
+              }}
+              asChild
+              size="lg"
+              variant="outline"
               className="border-none text-text-inverted bg-brand-primary hover:bg-brand-primary/70 hover:text-text-inverted px-8 py-6"
             >
-              <Link to="/learn-more" className="flex items-center">
+              <p className="flex items-center">
                 How It Works <ArrowRight className="ml-2 h-5 w-5" />
-              </Link>
+              </p>
             </Button>
           </div>
         </div>

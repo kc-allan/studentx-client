@@ -68,7 +68,7 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({ user }) => {
             <Avatar className="w-24 h-24 lg:w-32 lg:h-32 border-4 border-white/20">
               <AvatarImage src={user.avatar} alt={`${user.firstName} ${user.lastName}`} />
               <AvatarFallback className="text-2xl lg:text-3xl font-bold bg-white/10">
-                {user.firstName}{user.lastName}
+                {user.firstName[0]}{user.lastName[0]}
               </AvatarFallback>
             </Avatar>
             <Button
@@ -97,14 +97,18 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({ user }) => {
                   <School className="h-4 w-4" />
                   <span>{user.university}</span>
                 </div>
-                <div className="flex items-center gap-1">
-                  <Calendar className="h-4 w-4" />
-                  <span>Class of {user.graduationYear}</span>
-                </div>
-                <div className="flex items-center gap-1">
-                  <MapPin className="h-4 w-4" />
-                  <span>{user.major}</span>
-                </div>
+                {user.graduationYear && (
+                  <div className="flex items-center gap-1">
+                    <Calendar className="h-4 w-4" />
+                    <span>Class of {user.graduationYear}</span>
+                  </div>
+                )}
+                {user.major && (
+                  <div className="flex items-center gap-1">
+                    <MapPin className="h-4 w-4" />
+                    <span>{user.major}</span>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -133,14 +137,14 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({ user }) => {
 
           {/* Action Buttons */}
           <div className="flex gap-3">
-            <Button
+            {/* <Button
               variant="secondary"
               className="bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/20 text-white"
               onClick={() => setShowShareMenu(!showShareMenu)}
             >
               <Share2 className="h-4 w-4 mr-2" />
               Share Profile
-            </Button>
+            </Button> */}
             {/* <Button
               variant="secondary"
               className="bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/20 text-white"

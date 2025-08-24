@@ -24,7 +24,7 @@ const authSlice = createSlice({
 			state.user = null;
 			state.role = null;
 			localStorage.clear();
-			window.location.href = "/auth?page=login";
+			window.location.href = "/";
 		},
 	},
 });

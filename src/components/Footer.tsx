@@ -48,13 +48,10 @@ const Footer: React.FC = () => {
                 <Link to="/" className="text-gray-400 hover:text-white">Home</Link>
               </li>
               <li>
-                <Link to="/featured" className="text-gray-400 hover:text-white">Featured Deals</Link>
+                <Link to="/deals" className="text-gray-400 hover:text-white">Featured Deals</Link>
               </li>
               <li>
                 <Link to="/categories" className="text-gray-400 hover:text-white">Categories</Link>
-              </li>
-              <li>
-                <Link to="/how-it-works" className="text-gray-400 hover:text-white">How It Works</Link>
               </li>
             </ul>
           </div>
@@ -63,17 +60,17 @@ const Footer: React.FC = () => {
             <h3 className="text-lg font-semibold mb-4">For Businesses</h3>
             <ul className="space-y-2">
               <li>
-                <Link to="/partner" className="text-gray-400 hover:text-white">Partner With Us</Link>
+                <Link to="https://merchant.studentx.co.ke" target="_blank" className="text-gray-400 hover:text-white">Partner With Us</Link>
               </li>
               <li>
-                <Link to="/provider-login" className="text-gray-400 hover:text-white">Provider Login</Link>
+                <Link to="https://merchant.studentx.co.ke/login" target="_blank" className="text-gray-400 hover:text-white">Merchant Login</Link>
               </li>
-              <li>
+              {/* <li>
                 <Link to="/success-stories" className="text-gray-400 hover:text-white">Success Stories</Link>
               </li>
               <li>
                 <Link to="/pricing" className="text-gray-400 hover:text-white">Pricing</Link>
-              </li>
+              </li> */}
             </ul>
           </div>
 
@@ -81,16 +78,16 @@ const Footer: React.FC = () => {
             <h3 className="text-lg font-semibold mb-4">Contact & Support</h3>
             <ul className="space-y-2">
               <li>
-                <Link to="/contact" className="text-gray-400 hover:text-white">Contact Us</Link>
+                <Link to="#" className="text-gray-400 hover:text-white">Contact Us</Link>
               </li>
               <li>
-                <Link to="/faq" className="text-gray-400 hover:text-white">FAQs</Link>
+                <Link to="#" className="text-gray-400 hover:text-white">FAQs</Link>
               </li>
               <li>
-                <Link to="/privacy" className="text-gray-400 hover:text-white">Privacy Policy</Link>
+                <Link to="#" className="text-gray-400 hover:text-white">Privacy Policy</Link>
               </li>
               <li>
-                <Link to="/terms" className="text-gray-400 hover:text-white">Terms of Service</Link>
+                <Link to="#" className="text-gray-400 hover:text-white">Terms of Service</Link>
               </li>
             </ul>
           </div>

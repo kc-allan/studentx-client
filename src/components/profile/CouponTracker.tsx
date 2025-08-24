@@ -5,12 +5,12 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { 
-  Gift, 
-  Calendar, 
-  TrendingUp, 
-  Clock, 
-  CheckCircle, 
+import {
+  Gift,
+  Calendar,
+  TrendingUp,
+  Clock,
+  CheckCircle,
   AlertCircle,
   Search,
   Filter,
@@ -24,11 +24,16 @@ import {
   Eye,
   ShoppingBag
 } from "lucide-react";
+import { Link } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
+import { toast } from '@/hooks/use-toast';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from "@/components/ui/dialog";
 
 interface CouponTrackerProps {
   user: {
     totalSavings: number;
     dealsUsed: number;
+    coupons: Coupon[];
   };
 }
 
@@ -42,80 +47,87 @@ interface Coupon {
   discountType: 'percentage' | 'fixed' | 'free_shipping';
   description: string;
   expiryDate: string;
-  status: 'active' | 'used' | 'expired';
-  category: string;
+  status: 'active' | 'redeemed' | 'expired';
+  category: {
+    id: string;
+    name: string;
+  };
   savings?: number;
   usedDate?: string;
   originalPrice?: number;
   finalPrice?: number;
+  redemptionType?: string; // 'online' or 'in-store'
 }
 
 export const CouponTracker: React.FC<CouponTrackerProps> = ({ user }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [filterCategory, setFilterCategory] = useState('all');
+  const navigate = useNavigate();
+  const [copied, setIsCopied] = useState(false);
 
-  const coupons: Coupon[] = [
-    {
-      id: '1',
-      code: 'STUDENT20',
-      title: '20% Off Sneakers',
-      brand: 'Nike',
-      brandLogo: 'https://cdn.simpleicons.org/nike/000000',
-      discount: '20%',
-      discountType: 'percentage',
-      description: 'Get 20% off on all sneakers and athletic wear',
-      expiryDate: '2024-12-31',
-      status: 'active',
-      category: 'Fashion',
-      savings: 45.99
-    },
-    {
-      id: '2',
-      code: 'PREMIUM50',
-      title: 'Spotify Premium Student',
-      brand: 'Spotify',
-      brandLogo: 'https://cdn.simpleicons.org/spotify/1DB954',
-      discount: '50%',
-      discountType: 'percentage',
-      description: '50% off Spotify Premium for students',
-      expiryDate: '2024-12-31',
-      status: 'used',
-      category: 'Entertainment',
-      savings: 59.94,
-      usedDate: '2024-11-15',
-      originalPrice: 119.88,
-      finalPrice: 59.94
-    },
-    {
-      id: '3',
-      code: 'FREESHIP',
-      title: 'Free Shipping',
-      brand: 'Amazon',
-      brandLogo: 'https://cdn.simpleicons.org/amazon/FF9900',
-      discount: 'Free Shipping',
-      discountType: 'free_shipping',
-      description: 'Free shipping on orders over $25',
-      expiryDate: '2024-11-30',
-      status: 'expired',
-      category: 'Shopping',
-    },
-    {
-      id: '4',
-      code: 'STUDENT10',
-      title: '$10 Off First Order',
-      brand: 'Uber Eats',
-      brandLogo: 'https://cdn.simpleicons.org/uber/000000',
-      discount: '$10',
-      discountType: 'fixed',
-      description: '$10 off your first food delivery order',
-      expiryDate: '2025-01-15',
-      status: 'active',
-      category: 'Food',
-    }
-  ];
+  const coupons: Coupon[] = user.coupons;
+  // [
+  //   {
+  //     id: '1',
+  //     code: 'STUDENT20',
+  //     title: '20% Off Sneakers',
+  //     brand: 'Nike',
+  //     brandLogo: 'https://cdn.simpleicons.org/nike/000000',
+  //     discount: '20%',
+  //     discountType: 'percentage',
+  //     description: 'Get 20% off on all sneakers and athletic wear',
+  //     expiryDate: '2024-12-31',
+  //     status: 'active',
+  //     category: 'Fashion',
+  //     savings: 45.99
+  //   },
+  //   {
+  //     id: '2',
+  //     code: 'PREMIUM50',
+  //     title: 'Spotify Premium Student',
+  //     brand: 'Spotify',
+  //     brandLogo: 'https://cdn.simpleicons.org/spotify/1DB954',
+  //     discount: '50%',
+  //     discountType: 'percentage',
+  //     description: '50% off Spotify Premium for students',
+  //     expiryDate: '2024-12-31',
+  //     status: 'used',
+  //     category: 'Entertainment',
+  //     savings: 59.94,
+  //     usedDate: '2024-11-15',
+  //     originalPrice: 119.88,
+  //     finalPrice: 59.94
+  //   },
+  //   {
+  //     id: '3',
+  //     code: 'FREESHIP',
+  //     title: 'Free Shipping',
+  //     brand: 'Amazon',
+  //     brandLogo: 'https://cdn.simpleicons.org/amazon/FF9900',
+  //     discount: 'Free Shipping',
+  //     discountType: 'free_shipping',
+  //     description: 'Free shipping on orders over $25',
+  //     expiryDate: '2024-11-30',
+  //     status: 'expired',
+  //     category: 'Shopping',
+  //   },
+  //   {
+  //     id: '4',
+  //     code: 'STUDENT10',
+  //     title: '$10 Off First Order',
+  //     brand: 'Uber Eats',
+  //     brandLogo: 'https://cdn.simpleicons.org/uber/000000',
+  //     discount: '$10',
+  //     discountType: 'fixed',
+  //     description: '$10 off your first food delivery order',
+  //     expiryDate: '2025-01-15',
+  //     status: 'active',
+  //     category: 'Food',
+  //   }
+  // ];
 
   const activeCoupons = coupons.filter(coupon => coupon.status === 'active');
-  const usedCoupons = coupons.filter(coupon => coupon.status === 'used');
+  const usedCoupons = coupons.filter(coupon => coupon.status === 'redeemed');
   const expiredCoupons = coupons.filter(coupon => coupon.status === 'expired');
 
   const totalSavingsFromCoupons = usedCoupons.reduce((total, coupon) => total + (coupon.savings || 0), 0);
@@ -145,8 +157,8 @@ export const CouponTracker: React.FC<CouponTrackerProps> = ({ user }) => {
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', { 
-      month: 'short', 
+    return new Date(dateString).toLocaleDateString('en-US', {
+      month: 'short',
       day: 'numeric',
       year: 'numeric'
     });
@@ -154,6 +166,12 @@ export const CouponTracker: React.FC<CouponTrackerProps> = ({ user }) => {
 
   const copyToClipboard = (code: string) => {
     navigator.clipboard.writeText(code);
+    setIsCopied(true);
+    toast({
+      title: "Code Copied!",
+      description: "The coupon code has been copied to your clipboard",
+    });
+    setTimeout(() => setIsCopied(false), 3000);
     // You could add a toast notification here
   };
 
@@ -163,10 +181,10 @@ export const CouponTracker: React.FC<CouponTrackerProps> = ({ user }) => {
         <div className="flex items-start gap-4">
           {/* Brand Logo */}
           <div className="w-12 h-12 rounded-xl bg-background-subtle flex items-center justify-center border border-neutral-lighter">
-            <img 
-              src={coupon.brandLogo} 
+            <img
+              src={coupon.brandLogo}
               alt={coupon.brand}
-              className="w-8 h-8 object-contain"
+              className="w-12 h-12 object-cover rounded-xl"
             />
           </div>
 
@@ -188,10 +206,10 @@ export const CouponTracker: React.FC<CouponTrackerProps> = ({ user }) => {
                 <Button
                   size="icon"
                   variant="ghost"
-                  className="h-6 w-6 hover:bg-brand-primary/20"
+                  className="h-6 w-6 hover:bg-brand-primary/20 outline-none focus:outline-none"
                   onClick={() => copyToClipboard(coupon.code)}
                 >
-                  <Copy className="h-3 w-3" />
+                  {copied ? <CheckCircle className="h-3 w-3 text-success" /> : <Copy className="h-3 w-3" />}
                 </Button>
               </div>
               <div className="flex items-center gap-1 text-brand-primary font-semibold">
@@ -207,20 +225,15 @@ export const CouponTracker: React.FC<CouponTrackerProps> = ({ user }) => {
                   <Calendar className="h-3 w-3" />
                   <span>Expires {formatDate(coupon.expiryDate)}</span>
                 </div>
-                {coupon.savings && (
-                  <div className="flex items-center gap-1 text-success">
-                    <TrendingUp className="h-3 w-3" />
-                    <span>Saved ${coupon.savings}</span>
-                  </div>
-                )}
+                
               </div>
               <Badge variant="outline" className="text-xs">
-                {coupon.category}
+                {coupon.category.name}
               </Badge>
             </div>
 
             {/* Used Coupon Details */}
-            {coupon.status === 'used' && coupon.usedDate && (
+            {coupon.status === 'redeemed' && coupon.usedDate && (
               <div className="mt-3 p-3 bg-brand-primary/5 rounded-lg border border-brand-primary/10">
                 <div className="flex items-center justify-between text-xs">
                   <span className="text-neutral-medium">Used on {formatDate(coupon.usedDate)}</span>
@@ -235,20 +248,51 @@ export const CouponTracker: React.FC<CouponTrackerProps> = ({ user }) => {
             )}
           </div>
 
+          {/* Ways to claim dialog */}
+
+
           {/* Actions */}
           <div className="flex flex-col gap-2">
             {coupon.status === 'active' && (
               <>
-                <Button size="sm" className="bg-brand-primary hover:bg-brand-primary/90">
-                  <ExternalLink className="h-3 w-3 mr-1" />
-                  Use Now
-                </Button>
-                <Button size="sm" variant="outline">
-                  <Share2 className="h-3 w-3" />
-                </Button>
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button size="sm" className="bg-brand-primary text-white hover:bg-brand-primary/90">
+                      <ExternalLink className="h-3 w-3 mr-1 " />
+                      Redeem
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="max-w-lg">
+                    <DialogHeader>
+                      <DialogTitle>How to Claim</DialogTitle>
+                      <DialogDescription>
+                        Here are the steps to use this coupon:
+                      </DialogDescription>
+                    </DialogHeader>
+                    <Card className="border-neutral-lighter mb-4">
+                      <CardContent className="p-4">
+                        <ul className="list-disc pl-5 space-y-2 text-sm text-neutral-medium">
+                          {coupon.redemptionType === 'online' ? (
+                            <>
+                              <li>Visit the <strong>{coupon.brand}</strong> website or app.</li>
+                              <li>Enter the code <span className="font-mono font-bold">{coupon.code}</span> at checkout.</li>
+                              <li>Enjoy your discount!</li>
+                            </>
+                          ) : (
+                            <>
+                              <li>Visit a <strong>{coupon.brand}</strong> store near you.</li>
+                              <li>Show the coupon code <span className="font-mono font-bold">{coupon.code}</span> to the cashier.</li>
+                              <li>Enjoy your discount!</li>
+                            </>
+                          )}
+                        </ul>
+                      </CardContent>
+                    </Card>
+                  </DialogContent>
+                </Dialog>
               </>
             )}
-            {coupon.status === 'used' && (
+            {coupon.status === 'redeemed' && (
               <Button size="sm" variant="outline">
                 <Eye className="h-3 w-3 mr-1" />
                 <span className='hidden sm:inline'>View Details</span>
@@ -340,7 +384,7 @@ export const CouponTracker: React.FC<CouponTrackerProps> = ({ user }) => {
                 <Gift className="h-12 w-12 text-neutral-medium mx-auto mb-4" />
                 <h3 className="text-lg font-semibold text-text-primary mb-2">No Active Coupons</h3>
                 <p className="text-neutral-medium mb-4">Discover new deals to add coupons to your collection</p>
-                <Button className="bg-brand-primary hover:bg-brand-primary/90">
+                <Button onClick={() => navigate('/deals')} className="bg-brand-primary hover:bg-brand-primary/90">
                   <ShoppingBag className="h-4 w-4 mr-2" />
                   Browse Deals
                 </Button>
@@ -350,11 +394,43 @@ export const CouponTracker: React.FC<CouponTrackerProps> = ({ user }) => {
         </TabsContent>
 
         <TabsContent value="used" className="space-y-4">
-          {usedCoupons.map(renderCouponCard)}
+          {usedCoupons.length > 0 ? (
+            usedCoupons.map(renderCouponCard)
+          ) : (
+            <Card className="border-neutral-lighter">
+              <CardContent className="p-12 text-center">
+                <Gift className="h-12 w-12 text-neutral-medium mx-auto mb-4" />
+                <h3 className="text-lg font-semibold text-text-primary mb-2">No Used Coupons</h3>
+                <p className="text-neutral-medium mb-4">
+                  You haven't used any coupons yet. Start saving with our exclusive deals!
+                </p>
+                <Button onClick={() => navigate('/deals')} className="bg-brand-primary hover:bg-brand-primary/90">
+                  <ShoppingBag className="h-4 w-4 mr-2" />
+                  Browse Deals
+                </Button>
+              </CardContent>
+            </Card>
+          )}
         </TabsContent>
 
         <TabsContent value="expired" className="space-y-4">
-          {expiredCoupons.map(renderCouponCard)}
+          {expiredCoupons.length > 0 ? (
+            expiredCoupons.map(renderCouponCard)
+          ) : (
+            <Card className="border-neutral-lighter">
+              <CardContent className="p-12 text-center">
+                <Gift className="h-12 w-12 text-neutral-medium mx-auto mb-4" />
+                <h3 className="text-lg font-semibold text-text-primary mb-2">No Expired Coupons</h3>
+                <p className="text-neutral-medium mb-4">
+                  You have no expired coupons. Keep an eye on your active deals!
+                </p>
+                <Button onClick={() => navigate('/deals')} className="bg-brand-primary hover:bg-brand-primary/90">
+                  <ShoppingBag className="h-4 w-4 mr-2" />
+                  Browse Deals
+                </Button>
+              </CardContent>
+            </Card>
+          )}
         </TabsContent>
       </Tabs>
     </div>

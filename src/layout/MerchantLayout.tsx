@@ -30,7 +30,9 @@ const MerchantLayout: React.FC<MerchantLayoutProps> = ({ children }) => {
   const navigate = useNavigate();
 
   React.useEffect(() => {
-    if (!isAuthenticated || !!user) {
+    
+    
+    if (!isAuthenticated && !!user) {
       navigate("/merchant/login");
     }
   }, [isAuthenticated, user]);

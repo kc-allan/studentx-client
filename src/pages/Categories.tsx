@@ -50,7 +50,7 @@ const Categories = () => {
       const categoryData = response.data.data;
       setCategories(categoryData);
     } catch (error) {
-      console.error(error);
+      
       toast({
         title: error.response.data?.message || error.message || "An error occurred",
         description: error.response.data?.message || "Something went wrong while getting categories. It's not you it's us",
@@ -106,7 +106,7 @@ const Categories = () => {
               {categories.map((category: Category) => (
                 <Link
                   key={category.id}
-                  to={`/categories/${category.slug}`}
+                  to={`/deals?filters=${category.id}`}
                   className="group"
                 >
                   <Card className="h-full border bg-gray-50 hover:border-brand-primary/30 transition-all overflow-hidden">

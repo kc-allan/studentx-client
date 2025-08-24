@@ -10,6 +10,7 @@ import TestimonialsSection from "@/components/TestimonialsSection";
 import SignUpBanner from "@/components/SignUpBanner";
 import Footer from "@/components/Footer";
 
+
 const Index = () => {
   return (
     <div className="min-h-screen flex flex-col items-center w-full bg-gray-50">

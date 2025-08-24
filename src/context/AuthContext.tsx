@@ -21,7 +21,7 @@
 
 //   React.useEffect(() => {
 //     // console.log('isAuthenticated:', isAuthenticated, user, localStorage.getItem('user'), document.cookie || "No cookies");
-//     console.log("state", user);
+//     
     
 //   }, [isAuthenticated]);
 

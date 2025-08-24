@@ -9,6 +9,7 @@ export enum CouponStatus {
 }
 
 export interface Coupon {
+	id: string;
 	code: string;
 	qrCode: string;
 	expiryDate: string;

@@ -23,15 +23,20 @@ const AuthPage = () => {
   const page = query.get('page')
   const next = query.get('next')
   const navigate = useNavigate();
-  if (isAuthenticated) {
-    toast({
-      title: "You are already logged in",
-      description: "Redirecting to home page...",
-      variant: "info",
-    });
-    navigate(next || "/");
-    return null;
+
+  React.useEffect(() => {
+    if (isAuthenticated) {
+      toast({
+        title: "You are already logged in",
+        description: "Redirecting to home page...",
+        variant: "info",
+      });
+      navigate(next || "/");
+      return;
+    }
+
   }
+    , []);
 
   const dispatch = useDispatch();
   const [activeForm, setActiveForm] = React.useState<string>(page && (page.includes('login') || page.includes('signup')) ? page : "login");
@@ -82,7 +87,7 @@ const AuthPage = () => {
         rememberMe
       });
       if (response.status !== 200) {
-        console.error("Login failed:", response.data);
+
         throw new Error(response.data.message);
       }
       const { message, user, user_role } = response.data
@@ -99,7 +104,7 @@ const AuthPage = () => {
       );
       navigate(next || "/");
     } catch (error) {
-      console.error("Login error:", error);
+
       toast({
         title: error.response?.data.message || error.message || "Login failed",
         description: "An error occurred while logging in. Please try again.",
@@ -146,11 +151,11 @@ const AuthPage = () => {
         password: signupPassword,
       });
       if (response.status !== 201) {
-        console.error("Signup failed:", response.data);
+
         throw new Error(response.data.message);
       }
       const { message, username } = response.data
-      console.log("Signup response:", response.data);
+
 
       toast({
         title: message,
@@ -161,7 +166,7 @@ const AuthPage = () => {
       setLoginEmail(signupEmail);
       setLoginPassword(signupPassword);
     } catch (error) {
-      console.error("Signup error:", error);
+
       toast({
         title: error.response?.data.message || error.message || "Signup failed",
         description: error.response?.data.description || "An error occurred while signing up. Please try again.",
@@ -291,7 +296,7 @@ const AuthPage = () => {
           </div>
 
           {/* Form Panel */}
-          <div id="form-panel" className="w-full md:w-1/2 bg-white z-20 h-full lg:max-h-[540px] overflow-y-auto shadow-lg">
+          <div id="form-panel" className="w-full md:w-1/2 bg-white z-20 h-full lg:min-h-[540px] lg:max-h-[540px] overflow-y-auto shadow-lg">
             <div className="h-full flex flex-col justify-center p-5 md:p-12">
               <AnimatePresence mode="wait">
                 {activeForm === "login" ? (
@@ -338,13 +343,14 @@ const AuthPage = () => {
                             <KeyRound className="h-4 w-4 text-gray-500" />
                             Password
                           </label>
-                          <Link to="/forgot-password" className="text-xs text-blue-600 hover:text-blue-800 hover:underline">
+                          <Link to="/reset-password" className="text-xs text-blue-600 hover:text-blue-800 hover:underline">
                             Forgot password?
                           </Link>
                         </div>
                         <div className="relative">
                           <Input
                             id="password"
+                            placeholder="Enter your password"
                             type={showLoginPassword ? "text" : "password"}
                             required
                             className="border-gray-300 focus:border-blue-500 focus:ring-blue-500"
@@ -402,7 +408,7 @@ const AuthPage = () => {
                       </Button>
                     </form>
 
-                    <div className="relative my-6">
+                    {/* <div className="relative my-6">
                       <div className="absolute inset-0 flex items-center">
                         <div className="w-full border-t border-gray-200"></div>
                       </div>
@@ -427,7 +433,7 @@ const AuthPage = () => {
                         </svg>
                         Facebook
                       </Button>
-                    </div>
+                    </div> */}
 
                     <div className="mt-8 text-center md:hidden">
                       <p className="text-sm text-gray-600">
@@ -589,7 +595,7 @@ const AuthPage = () => {
                           className="mt-1"
                         />
                         <label htmlFor="terms" className="text-sm text-gray-600 cursor-pointer select-none">
-                          I agree to the <Link to="/terms" className="text-blue-600 hover:underline">Terms of Service</Link> and <Link to="/privacy" className="text-blue-600 hover:underline">Privacy Policy</Link>
+                          I agree to the <Link to="/terms" className="text-blue-600 hover:underline">Terms of Use</Link> and <Link to="/privacy" className="text-blue-600 hover:underline">Privacy Policy</Link>
                         </label>
                       </div>
 

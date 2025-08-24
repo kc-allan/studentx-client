@@ -17,18 +17,20 @@ axiosInstance.interceptors.response.use(
 
 		if (status === 401) {
 			localStorage.clear();
-			if (window.location.pathname !== '/auth') {
+			if (window.location.pathname !== '/auth' && window.location.pathname !== '/merchant/login') {
 				const next = window.location.pathname + window.location.search;
-				window.location.href = '/auth?page=login' + `&next=${encodeURIComponent(next)}`;
+				if (window.location.pathname.startsWith('/merchant')) {
+					window.location.href = '/merchant/login' + `?next=${encodeURIComponent(next)}`;
+				} else {
+					window.location.href = '/auth?page=login' + `&next=${encodeURIComponent(next)}`;
+				}
 			}
-		} else if (status === 403) {
-			// Handle Forbidden
-			alert('You do not have permission to perform this action.');
-		} else if (status === 500) {
-			// Handle Server Error
-			console.error('Server error. Please try again later.');
-			alert('Server error. Please try again later.');
 		}
+		// } else if (status === 403) {
+		// 	// Handle Forbidden
+		// 	alert('You do not have permission to perform this action.');
+		// 	window.location.href = '/me';
+		// }
 
 		// Optionally rethrow or return a custom error object
 		return Promise.reject(error);

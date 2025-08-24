@@ -66,7 +66,7 @@ import axiosInstance from '@/api/axios';
 
 const Profile = () => {
 	const urlParams = new URLSearchParams(window.location.search);
-	const [activeTab, setActiveTabFn] = useState(urlParams.get('tab') || "a");
+	const [activeTab, setActiveTabFn] = useState(urlParams.get('tab') || "account");
 	const [userData, setUserData] = useState(null);
 	const [fetchingProfile, setFetchingProfile] = useState(false);
 
@@ -106,7 +106,7 @@ const Profile = () => {
 			}
 			setUserData(response.data.data);
 		} catch (error) {
-			console.error("Failed to fetch user data:", error);
+			
 			toast({
 				title: error.response.data.message || error.message || "Error populating profile",
 				description: error.response.data.description || "Failed to load user data. Please try again later.",
@@ -158,7 +158,7 @@ const Profile = () => {
 						<Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
 							{/* Navigation Tabs - Responsive */}
 							<div className="bg-white rounded-xl mt-4 shadow-sm border border-neutral-lighter mb-6 overflow-hidden">
-								<TabsList className="flex justify-between overflow-x-auto w-full p-2 h-auto bg-transparent gap-4">
+								<TabsList className="flex justify-between overflow-x-auto w-full p-2 h-auto bg-transparent gap-4 *:w-full">
 									{/* <TabsTrigger
 									value="overview"
 									className="data-[state=active]:bg-brand-primary data-[state=active]:text-white flex items-center gap-2 py-3 px-2 text-xs sm:text-sm"

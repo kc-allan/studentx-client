@@ -44,6 +44,7 @@ interface Offer {
 interface Category {
   id: string;
   name: string;
+  label: string;
 }
 
 const useUpdateFilters = () => {
@@ -89,11 +90,13 @@ const CouponDeals = () => {
   const [loading, setLoading] = React.useState<boolean>(true);
   const [categories, setCategories] = React.useState<Category[]>([]);
   const [expanded, setExpanded] = React.useState(false);
-  const [searchQuery, setSearchQuery] = React.useState("");
-  const [sortOption, setSortOption] = React.useState("newest");
   const location = useLocation();
-  const navigate = useNavigate();
   const urlQuery = new URLSearchParams(location.search);
+  const [searchQuery, setSearchQuery] = React.useState<string>(urlQuery.get("search") || "");
+  const [sortOption, setSortOption] = React.useState<string>(urlQuery.get("sort") || "newest");
+  const [limit, setLimit] = React.useState<number>(urlQuery.get("limit") ? parseInt(urlQuery.get("limit")!) : 50);
+  const [offset, setOffset] = React.useState<number>(urlQuery.get("offset") ? parseInt(urlQuery.get("offset")!) : 0);
+  const navigate = useNavigate();
   const { addFilterToURL, removeFilterFromURL, clearFiltersFromURL } = useUpdateFilters();
 
   // Fetch categories from backend
@@ -107,12 +110,12 @@ const CouponDeals = () => {
         })));
       }
     } catch (error) {
-      console.error("Failed to fetch categories:", error);
+
     }
   };
 
   // Fetch offers with filters
-  const fetchOffers = async () => {
+  const fetchOffers = async (limitParam: number = limit, offsetParam: number = offset) => {
     try {
       setLoading(true);
       const params = new URLSearchParams();
@@ -135,12 +138,15 @@ const CouponDeals = () => {
         params.append("sort", sort);
       }
 
+      params.append("limit", limitParam.toString()); // Limit results to 20
+      params.append("offset", offsetParam.toString()); // Start from the first page
+
       const response = await axiosInstance.get(`/offer/recommended?${params.toString()}`);
-      if (response.status === 200) {
-        setOffers(response.data.data);
+      if (response.status !== 200) {
+        throw new Error(response.data.message || "Failed to fetch offers");
       }
+      setOffers(response.data.data);
     } catch (error) {
-      console.error("Failed to fetch offers:", error);
       toast({
         title: "Error loading offers",
         description: "Could not load offers at this time. Please try again later.",
@@ -196,10 +202,10 @@ const CouponDeals = () => {
   };
 
   const discountTypes = [
+    { id: "fixed_amount", label: "Fixed Amount Off" },
     { id: "percentage", label: "Percentage Off" },
-    { id: "fixed", label: "Fixed Amount Off" },
-    { id: "bogo", label: "Buy One Get One" },
-    { id: "free-item", label: "Free Item" }
+    { id: "buy_one_get_one", label: "Buy One Get One" },
+    { id: "free_item", label: "Free Item" }
   ];
 
   const initialFilters = urlQuery.get("filters") ? urlQuery.get("filters")!.split(",") : [];
@@ -209,7 +215,8 @@ const CouponDeals = () => {
   const filteredOffers = offers.filter(offer => {
     const matchesSearch = !urlQuery.get("search") ||
       offer.title.toLowerCase().includes(urlQuery.get("search")!.toLowerCase()) ||
-      offer.description.toLowerCase().includes(urlQuery.get("search")!.toLowerCase());
+      offer.description.toLowerCase().includes(urlQuery.get("search")!.toLowerCase()) ||
+      offer.merchant.name.toLowerCase().includes(urlQuery.get("search")!.toLowerCase());
 
     const matchesFilters = selectedFilters.length === 0 ||
       selectedFilters.some(filter =>
@@ -410,7 +417,7 @@ const CouponDeals = () => {
                 </h3>
               </div>
 
-              <div className="p-6">
+              <div className="p-6 overflow-y-auto max-h-[calc(100vh-200px)]">
                 <div className="mb-6">
                   <h4 className="text-sm font-medium mb-3 flex items-center gap-2">
                     <Tag size={14} />
@@ -525,14 +532,28 @@ const CouponDeals = () => {
                 ))
               ) : sortedOffers.length === 0 ? (
                 <div className="col-span-1 sm:col-span-2 xl:col-span-3">
-                  <p className="text-center text-gray-500">No deals found matching your criteria.</p>
-                  <Button
-                    variant="outline"
-                    className="mt-4 mx-auto"
-                    onClick={clearFilters}
-                  >
-                    Clear filters
-                  </Button>
+                  <div className="text-center p-8">
+                    <div className="mx-auto max-w-md">
+                      <Search className="mx-auto h-12 w-12 text-gray-400" />
+                      <h3 className="mt-4 text-lg font-medium text-gray-900">No matching deals found</h3>
+                      <p className="mt-2 text-gray-500">
+                        {selectedFilters.length > 0 || urlQuery.get("search")
+                          ? "We couldn't find any deals matching your search. Try adjusting your filters or search terms."
+                          : "Looks like we're fresh out of deals at the moment. Check back soon for new offers!"}
+                      </p>
+                      <div className="mt-6">
+                        <Button
+                          variant="outline"
+                          className="mx-auto"
+                          onClick={clearFilters}
+                        >
+                          {selectedFilters.length > 0 || urlQuery.get("search")
+                            ? "Clear all filters"
+                            : "Browse all deals"}
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               ) : sortedOffers.map((offer) => (
                 <OfferCard key={offer.id} offer={offer} />
@@ -550,7 +571,8 @@ const CouponDeals = () => {
                       behavior: "smooth",
                       block: "start"
                     });
-                    fetchOffers();
+                    setOffset(prev => prev + limit);
+                    fetchOffers(limit, offset + limit);
                   }}
                 >
                   Load More Deals

@@ -1,7 +1,7 @@
 import { Navigate, useNavigate } from 'react-router-dom';
 import { toast } from '@/hooks/use-toast';
 import { useSelector } from 'react-redux';
-import { RootState } from '@/state/auth';
+import { RootState } from '@/state';
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
 	const { userRole, isAuthenticated } = useSelector((state: RootState) => ({
@@ -12,7 +12,7 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
 	const navigate = useNavigate();
 
 	if (!isAuthenticated) {
-		return <Navigate to="/auth?page=login" replace />;
+		return <Navigate to={`/auth?page=login&next=${window.location.pathname}`} replace />;
 	}
 
 	if (!allowedRoles.includes(userRole)) {

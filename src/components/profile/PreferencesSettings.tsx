@@ -7,14 +7,14 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
 import { Badge } from "@/components/ui/badge";
-import { 
-  Bell, 
-  Mail, 
-  Phone, 
-  Globe, 
-  Palette, 
-  Target, 
-  MapPin, 
+import {
+  Bell,
+  Mail,
+  Phone,
+  Globe,
+  Palette,
+  Target,
+  MapPin,
   DollarSign,
   Clock,
   Filter,
@@ -38,20 +38,20 @@ export const PreferencesSettings: React.FC<PreferencesSettingsProps> = ({ user }
     weeklyDigest: true,
     priceAlerts: true,
     expiring: true,
-    
+
     // Deal Preferences
     categories: ['Technology', 'Food & Dining', 'Fashion'],
     maxBudget: [500],
     minDiscount: [10],
     location: 'Boston, MA',
     radius: [25],
-    
+
     // App Preferences
     language: 'en',
     currency: 'USD',
     theme: 'light',
     autoApplyCoupons: true,
-    
+
     // Privacy Preferences
     profileVisibility: 'public',
     shareActivity: true,
@@ -60,7 +60,7 @@ export const PreferencesSettings: React.FC<PreferencesSettingsProps> = ({ user }
   });
 
   const categories = [
-    'Technology', 'Fashion', 'Food & Dining', 'Entertainment', 
+    'Technology', 'Fashion', 'Food & Dining', 'Entertainment',
     'Travel', 'Books & Education', 'Health & Beauty', 'Sports & Fitness',
     'Home & Garden', 'Automotive'
   ];
@@ -76,7 +76,7 @@ export const PreferencesSettings: React.FC<PreferencesSettingsProps> = ({ user }
 
   const handleSave = () => {
     // Save preferences logic here
-    console.log('Saving preferences:', preferences);
+    
   };
 
   return (
@@ -102,13 +102,14 @@ export const PreferencesSettings: React.FC<PreferencesSettingsProps> = ({ user }
                 </div>
                 <Switch
                   id="email-deals"
+                  className={`${preferences.emailDeals ? 'bg-brand-primary' : 'bg-gray-300'}`}
                   checked={preferences.emailDeals}
-                  onCheckedChange={(checked) => 
+                  onCheckedChange={(checked) =>
                     setPreferences(prev => ({ ...prev, emailDeals: checked }))
                   }
                 />
               </div>
-              
+
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <Bell className="h-4 w-4 text-brand-primary" />
@@ -116,13 +117,14 @@ export const PreferencesSettings: React.FC<PreferencesSettingsProps> = ({ user }
                 </div>
                 <Switch
                   id="push-deals"
+                  className={`${preferences.pushDeals ? 'bg-brand-primary' : 'bg-gray-300'}`}
                   checked={preferences.pushDeals}
-                  onCheckedChange={(checked) => 
+                  onCheckedChange={(checked) =>
                     setPreferences(prev => ({ ...prev, pushDeals: checked }))
                   }
                 />
               </div>
-              
+
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <Phone className="h-4 w-4 text-brand-primary" />
@@ -130,14 +132,15 @@ export const PreferencesSettings: React.FC<PreferencesSettingsProps> = ({ user }
                 </div>
                 <Switch
                   id="sms-deals"
+                  className={`${preferences.smsDeals ? 'bg-brand-primary' : 'bg-gray-300'}`}
                   checked={preferences.smsDeals}
-                  onCheckedChange={(checked) => 
+                  onCheckedChange={(checked) =>
                     setPreferences(prev => ({ ...prev, smsDeals: checked }))
                   }
                 />
               </div>
             </div>
-            
+
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
@@ -146,13 +149,14 @@ export const PreferencesSettings: React.FC<PreferencesSettingsProps> = ({ user }
                 </div>
                 <Switch
                   id="weekly-digest"
+                  className={`${preferences.weeklyDigest ? 'bg-brand-primary' : 'bg-gray-300'}`}
                   checked={preferences.weeklyDigest}
-                  onCheckedChange={(checked) => 
+                  onCheckedChange={(checked) =>
                     setPreferences(prev => ({ ...prev, weeklyDigest: checked }))
                   }
                 />
               </div>
-              
+
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <DollarSign className="h-4 w-4 text-brand-primary" />
@@ -160,13 +164,14 @@ export const PreferencesSettings: React.FC<PreferencesSettingsProps> = ({ user }
                 </div>
                 <Switch
                   id="price-alerts"
+                  className={`${preferences.priceAlerts ? 'bg-brand-primary' : 'bg-gray-300'}`}
                   checked={preferences.priceAlerts}
-                  onCheckedChange={(checked) => 
+                  onCheckedChange={(checked) =>
                     setPreferences(prev => ({ ...prev, priceAlerts: checked }))
                   }
                 />
               </div>
-              
+
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <Clock className="h-4 w-4 text-brand-primary" />
@@ -174,8 +179,9 @@ export const PreferencesSettings: React.FC<PreferencesSettingsProps> = ({ user }
                 </div>
                 <Switch
                   id="expiring"
+                  className={`${preferences.expiring ? 'bg-brand-primary' : 'bg-gray-300'}`}
                   checked={preferences.expiring}
-                  onCheckedChange={(checked) => 
+                  onCheckedChange={(checked) =>
                     setPreferences(prev => ({ ...prev, expiring: checked }))
                   }
                 />
@@ -205,11 +211,10 @@ export const PreferencesSettings: React.FC<PreferencesSettingsProps> = ({ user }
                 <Badge
                   key={category}
                   variant={preferences.categories.includes(category) ? "default" : "outline"}
-                  className={`cursor-pointer justify-center py-2 ${
-                    preferences.categories.includes(category)
-                      ? 'bg-brand-primary text-white border-brand-primary'
-                      : 'hover:border-brand-primary hover:text-brand-primary'
-                  }`}
+                  className={`cursor-pointer justify-center py-2 ${preferences.categories.includes(category)
+                    ? 'bg-brand-primary text-white border-brand-primary'
+                    : 'hover:border-brand-primary hover:text-brand-primary'
+                    }`}
                   onClick={() => handleCategoryToggle(category)}
                 >
                   {category}
@@ -219,13 +224,13 @@ export const PreferencesSettings: React.FC<PreferencesSettingsProps> = ({ user }
           </div>
 
           {/* Budget Range */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <Label className="text-sm font-medium mb-3 block">Maximum Budget per Deal</Label>
               <div className="space-y-2">
                 <Slider
                   value={preferences.maxBudget}
-                  onValueChange={(value) => 
+                  onValueChange={(value) =>
                     setPreferences(prev => ({ ...prev, maxBudget: value }))
                   }
                   max={1000}
@@ -246,7 +251,7 @@ export const PreferencesSettings: React.FC<PreferencesSettingsProps> = ({ user }
               <div className="space-y-2">
                 <Slider
                   value={preferences.minDiscount}
-                  onValueChange={(value) => 
+                  onValueChange={(value) =>
                     setPreferences(prev => ({ ...prev, minDiscount: value }))
                   }
                   max={50}
@@ -261,7 +266,7 @@ export const PreferencesSettings: React.FC<PreferencesSettingsProps> = ({ user }
                 </div>
               </div>
             </div>
-          </div>
+          </div> */}
 
           {/* Location Preferences */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -269,13 +274,13 @@ export const PreferencesSettings: React.FC<PreferencesSettingsProps> = ({ user }
               <Label className="text-sm font-medium mb-2 block">Location</Label>
               <div className="flex items-center gap-2">
                 <MapPin className="h-4 w-4 text-neutral-medium" />
-                <Select value={preferences.location} onValueChange={(value) => 
+                <Select value={preferences.location} onValueChange={(value) =>
                   setPreferences(prev => ({ ...prev, location: value }))
                 }>
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="bg-white">
                     <SelectItem value="Boston, MA">Boston, MA</SelectItem>
                     <SelectItem value="New York, NY">New York, NY</SelectItem>
                     <SelectItem value="Los Angeles, CA">Los Angeles, CA</SelectItem>
@@ -290,7 +295,7 @@ export const PreferencesSettings: React.FC<PreferencesSettingsProps> = ({ user }
               <div className="space-y-2">
                 <Slider
                   value={preferences.radius}
-                  onValueChange={(value) => 
+                  onValueChange={(value) =>
                     setPreferences(prev => ({ ...prev, radius: value }))
                   }
                   max={100}
@@ -324,13 +329,13 @@ export const PreferencesSettings: React.FC<PreferencesSettingsProps> = ({ user }
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div>
               <Label className="text-sm font-medium mb-2 block">Language</Label>
-              <Select value={preferences.language} onValueChange={(value) => 
+              <Select value={preferences.language} onValueChange={(value) =>
                 setPreferences(prev => ({ ...prev, language: value }))
               }>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="bg-white">
                   <SelectItem value="en">English</SelectItem>
                   <SelectItem value="es">Español</SelectItem>
                   <SelectItem value="fr">Français</SelectItem>
@@ -340,13 +345,13 @@ export const PreferencesSettings: React.FC<PreferencesSettingsProps> = ({ user }
 
             <div>
               <Label className="text-sm font-medium mb-2 block">Currency</Label>
-              <Select value={preferences.currency} onValueChange={(value) => 
+              <Select value={preferences.currency} onValueChange={(value) =>
                 setPreferences(prev => ({ ...prev, currency: value }))
               }>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="bg-white">
                   <SelectItem value="USD">USD ($)</SelectItem>
                   <SelectItem value="EUR">EUR (€)</SelectItem>
                   <SelectItem value="GBP">GBP (£)</SelectItem>
@@ -354,21 +359,21 @@ export const PreferencesSettings: React.FC<PreferencesSettingsProps> = ({ user }
               </Select>
             </div>
 
-            <div>
+            {/* <div>
               <Label className="text-sm font-medium mb-2 block">Theme</Label>
-              <Select value={preferences.theme} onValueChange={(value) => 
+              <Select value={preferences.theme} onValueChange={(value) =>
                 setPreferences(prev => ({ ...prev, theme: value }))
               }>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="bg-white">
                   <SelectItem value="light">Light</SelectItem>
                   <SelectItem value="dark">Dark</SelectItem>
                   <SelectItem value="auto">Auto</SelectItem>
                 </SelectContent>
               </Select>
-            </div>
+            </div> */}
           </div>
 
           <div className="flex items-center justify-between">
@@ -381,8 +386,9 @@ export const PreferencesSettings: React.FC<PreferencesSettingsProps> = ({ user }
             </div>
             <Switch
               id="auto-apply"
+              className={`${preferences.autoApplyCoupons ? 'bg-brand-primary' : 'bg-gray-300'}`}
               checked={preferences.autoApplyCoupons}
-              onCheckedChange={(checked) => 
+              onCheckedChange={(checked) =>
                 setPreferences(prev => ({ ...prev, autoApplyCoupons: checked }))
               }
             />
@@ -404,13 +410,16 @@ export const PreferencesSettings: React.FC<PreferencesSettingsProps> = ({ user }
         <CardContent className="space-y-6">
           <div>
             <Label className="text-sm font-medium mb-2 block">Profile Visibility</Label>
-            <Select value={preferences.profileVisibility} onValueChange={(value) => 
-              setPreferences(prev => ({ ...prev, profileVisibility: value }))
-            }>
+            <Select
+
+              value={preferences.profileVisibility}
+              onValueChange={(value) =>
+                setPreferences(prev => ({ ...prev, profileVisibility: value }))
+              }>
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="bg-white" >
                 <SelectItem value="public">Public</SelectItem>
                 <SelectItem value="friends">Friends Only</SelectItem>
                 <SelectItem value="private">Private</SelectItem>
@@ -430,7 +439,7 @@ export const PreferencesSettings: React.FC<PreferencesSettingsProps> = ({ user }
               <Switch
                 id="share-activity"
                 checked={preferences.shareActivity}
-                onCheckedChange={(checked) => 
+                onCheckedChange={(checked) =>
                   setPreferences(prev => ({ ...prev, shareActivity: checked }))
                 }
               />
@@ -447,7 +456,7 @@ export const PreferencesSettings: React.FC<PreferencesSettingsProps> = ({ user }
               <Switch
                 id="data-collection"
                 checked={preferences.dataCollection}
-                onCheckedChange={(checked) => 
+                onCheckedChange={(checked) =>
                   setPreferences(prev => ({ ...prev, dataCollection: checked }))
                 }
               />
@@ -464,7 +473,7 @@ export const PreferencesSettings: React.FC<PreferencesSettingsProps> = ({ user }
               <Switch
                 id="marketing"
                 checked={preferences.marketing}
-                onCheckedChange={(checked) => 
+                onCheckedChange={(checked) =>
                   setPreferences(prev => ({ ...prev, marketing: checked }))
                 }
               />
@@ -475,9 +484,9 @@ export const PreferencesSettings: React.FC<PreferencesSettingsProps> = ({ user }
 
       {/* Save Button */}
       <div className="flex justify-end">
-        <Button 
+        <Button
           onClick={handleSave}
-          className="bg-brand-primary hover:bg-brand-primary/90 px-8"
+          className="bg-brand-primary hover:bg-brand-primary/90 px-8 text-white"
         >
           <Save className="h-4 w-4 mr-2" />
           Save Preferences

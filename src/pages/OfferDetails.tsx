@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { getSimilarOffers } from "@/data/mockData";
 import { Offer, OfferType } from "@/types/offer";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -12,6 +11,9 @@ import { toast } from "@/hooks/use-toast";
 import { Clock, Code, ChevronLeft, QrCode, Copy, Link2, Bookmark, Share2, Loader2, BookmarkCheck, BadgeCent, BadgeCheck, Verified } from "lucide-react";
 import axiosInstance from "@/api/axios";
 import { Coupon } from "@/types/coupon";
+import { set } from "date-fns";
+import { ConfirmModal } from "@/components/confirmModal";
+import { useConfirmModal } from "@/hooks/use-confirm-modal";
 
 interface RecommendedOffer {
   id: string;
@@ -34,9 +36,31 @@ const OfferDetails: React.FC = () => {
   const [isCopied, setIsCopied] = React.useState(false);
   const [savingDeal, setSavingDeal] = React.useState(false);
   const [savedDeal, setSavedDeal] = React.useState(false);
+  const [similarOffers, setSimilarOffers] = React.useState<RecommendedOffer[]>([]);
+  const [loadingPage, setLoadingPage] = React.useState(true);
+  const { isOpen, openModal, closeModal, modalProps } = useConfirmModal();
+  const [alert, setAlert] = React.useState<boolean>(false);
+
+  const getSimilarOffers = async (offerId: string): Promise<RecommendedOffer[]> => {
+    try {
+      const response = await axiosInstance.get(`/offer/${offerId}/similar`);
+      if (response.status !== 200) {
+        throw new Error("Failed to fetch similar offers");
+      }
+      setSimilarOffers(response.data.data);
+    } catch (error) {
+
+      toast({
+        title: "Error fetching similar offers",
+        description: error.message || "An error occurred while fetching similar offers.",
+        variant: "destructive",
+      });
+      return [];
+    }
+  }
 
   async function shareContent(title, text, url) {
-    console.log('shareContent called', { title, text, url });
+
 
     try {
       await navigator.share({
@@ -45,24 +69,37 @@ const OfferDetails: React.FC = () => {
         url: url,
       });
     } catch (err) {
-      console.log('Error sharing:', err);
+
       // Fallback to custom share dialog
       // showCustomShareDialog(title, url);
     }
   }
 
-  const handleSaveDeal = () => {
+  const handleSaveDeal = async () => {
     // Logic to save the deal (e.g., add to favorites)
-    setSavingDeal(true);
-    setTimeout(() => {
+    try {
+      setSavingDeal(true);
+      const response = await axiosInstance.post(`/offer/${id}/save`);
+      if (response.status !== 200 && response.status !== 201) {
+        throw new Error(response.data.message || "Failed to save deal");
+      }
+      setSavedDeal(true);
+      toast({
+        title: "Deal Saved!",
+        description: "This deal has been saved to your favorites.",
+        variant: "success",
+      });
+    } catch (error) {
+
+      toast({
+        title: error.response.data?.message || "Error Saving Deal",
+        description: error.message || "An error occurred while saving the deal.",
+        variant: "destructive",
+      });
+    } finally {
       setSavingDeal(false);
-      setSavedDeal(!savedDeal);
-    }, 2000);
-    toast({
-      title: "Deal Saved!",
-      description: "This deal has been saved to your favorites.",
-      variant: "success",
-    });
+      setSavedDeal(false);
+    }
   };
 
   const [offer, setOffer] = React.useState<Offer | null>(null);
@@ -71,6 +108,7 @@ const OfferDetails: React.FC = () => {
 
   const fetchOffer = async () => {
     try {
+      setLoadingPage(true);
       const couponData = await axiosInstance.get(`/offer/${id}`);
       if (!couponData) {
         throw new Error("Offer not found");
@@ -78,12 +116,14 @@ const OfferDetails: React.FC = () => {
       const { data } = couponData.data;
       setOffer(data);
     } catch (error) {
-      console.error(error);
+
       toast({
         title: "Error fetching offer",
         description: error.message,
         variant: "destructive",
       });
+    } finally {
+      setLoadingPage(false);
     }
   };
 
@@ -104,24 +144,49 @@ const OfferDetails: React.FC = () => {
         variant: "success",
       });
     } catch (error) {
-      console.error(error);
-      toast({
-        title: error.response.data.message || error.message || "Error fetching coupon",
-        description: error.response.data.description || "An error occurred while fetching the coupon code. Please try again.",
-        variant: "destructive",
-      });
+
+      if (error.response && error.response.status === 409) {
+        setIsRevealed(true);
+        setCoupon(error.response.data.data);
+      } else if (error.response && error.response.status === 403) {
+        console.error("Forbidden error:", error.response.data);
+        setAlert(true);
+        openModal({
+          title: error.response.data.message || "Action Not Allowed",
+          message: error.response.data.description || "You are not allowed to perform this action.",
+          confirmText: "Continue",
+          cancelText: "Cancel",
+          variant: "destructive",
+          onConfirm: () => {
+            window.location.href = "/me";
+          },
+          onClose: () => {
+            closeModal();
+            setAlert(false);
+          }
+        });
+      } else {
+        toast({
+          title: error.response.data.message || error.message || "Error fetching coupon",
+          description: error.response.data.description || "An error occurred while fetching the coupon code. Please try again.",
+          variant: "destructive",
+        });
+      }
     } finally {
       setFetchingCoupon(false);
     }
   }
   React.useEffect(() => {
     fetchOffer();
+    if (id) {
+      getSimilarOffers(id);
+    }
   }, [id]);
 
   const recommendedOffers: RecommendedOffer[] = React.useMemo(() => {
     if (!offer) return [];
-    return getSimilarOffers(offer.id) as RecommendedOffer[];
-  }, [offer]);
+    return similarOffers.filter((rec: RecommendedOffer) => rec.id !== offer.id);
+  }, [similarOffers, offer]);
 
   const formatValue = (offer: Offer | RecommendedOffer) => {
     switch (offer.discountType) {
@@ -163,6 +228,22 @@ const OfferDetails: React.FC = () => {
     }
   };
 
+  if (loadingPage) {
+    return (
+      <div className="min-h-screen flex flex-col bg-background-lighter">
+        <Header />
+        <main className="flex-grow flex items-center justify-center w-full min-h-screen mx-auto px-4 py-6 pt-20 sm:pt-24">
+          <div className="text-center flex flex-col items-center">
+            <Loader2 className="animate-spin h-8 w-8 text-brand-primary mb-4" />
+            <h2 className="text-xl font-bold mb-2 text-text-primary">Loading Offer Details...</h2>
+            <p className="text-text-secondary">Please wait while we fetch the offer details.</p>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
   if (!offer) {
     return (
       <div className="min-h-screen flex flex-col bg-background-lighter">
@@ -182,12 +263,17 @@ const OfferDetails: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-background-lighter">
+    <div className="min-h-screen flex flex-col items-center bg-background-lighter">
       <Header />
+      <ConfirmModal
+          isOpen={alert}
+          onClose={() => setAlert(false)}
+          {...modalProps}
+        />
       <main className="flex-grow w-full mx-auto px-4 py-6 pt-20 sm:pt-24">
         {/* Back button */}
         <div className="mb-6">
-          <Link to="/" className="text-brand-primary hover:text-brand-accent hover:underline flex items-center gap-1">
+          <Link to="/deals" className="text-brand-primary hover:text-brand-accent hover:underline flex items-center gap-1">
             <ChevronLeft className="h-4 w-4" />
             <span>Back to Deals</span>
           </Link>
@@ -243,7 +329,7 @@ const OfferDetails: React.FC = () => {
                         <span className="animate-spin">
                           <Loader2 className="h-6 w-6 text-brand-primary" />
                         </span>
-                      ) : savedDeal ? (
+                      ) : savedDeal || offer.isSaved ? (
                         <BookmarkCheck className="h-8 w-8 text-green-700" />
                       ) : (
                         <Bookmark className="h-6 w-6 text-brand-primary" />
@@ -305,11 +391,17 @@ const OfferDetails: React.FC = () => {
                             </div>
 
                             {/* Redeemed Count */}
-                            <div className="bg-background-subtle rounded-lg px-3 py-2 border border-border-subtle">
-                              <div className="flex items-center justify-between">
+                            <div className="flex justify-between gap-4 bg-white rounded-lg px-3 py-2 border border-border-subtle">
+                              <div className="flex w-full h-full p-3 bg-background-subtle items-center justify-between">
                                 <span className="text-sm font-medium text-text-primary">Redeemed</span>
                                 <Badge variant="outline" className="bg-amber-50 border-amber-200 text-amber-700">
                                   {offer.coupons.redeemed} times
+                                </Badge>
+                              </div>
+                              <div className="flex w-full p-3 h-full bg-background-subtle items-center justify-between">
+                                <span className="text-sm font-medium text-text-primary">Claimed</span>
+                                <Badge variant="outline" className="bg-amber-50 border-amber-200 text-amber-700">
+                                  {offer.coupons.claimed} times
                                 </Badge>
                               </div>
                             </div>
@@ -401,7 +493,7 @@ const OfferDetails: React.FC = () => {
           {/* Sidebar - Recommended Deals for Desktop */}
           <div className="hidden lg:block">
             <h3 className="text-xl font-semibold mb-4 text-text-primary">Recommended Deals</h3>
-            <div className="space-y-4 overflow-y-auto max-h-[calc(100vh-200px)] pr-2">
+            <div className="space-y-4 overflow-y-auto h-full max-h-screen pr-2 gap-4">
               {recommendedOffers.map((rec: RecommendedOffer) => {
                 // const recProvider = getProviderById(rec.providerId);
                 return (
