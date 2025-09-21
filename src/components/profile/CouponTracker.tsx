@@ -22,7 +22,11 @@ import {
   Percent,
   DollarSign,
   Eye,
-  ShoppingBag
+  ShoppingBag,
+  Repeat,
+  Trophy,
+  Users,
+  Infinity
 } from "lucide-react";
 import { Link } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
@@ -57,6 +61,24 @@ interface Coupon {
   originalPrice?: number;
   finalPrice?: number;
   redemptionType?: string; // 'online' or 'in-store'
+  // New flexible system fields
+  offer?: {
+    id: string;
+    usage_type?: 'single_use' | 'multi_use' | 'unlimited' | 'tiered';
+    max_claims_per_user?: number;
+    cooldown_period_hours?: number;
+  };
+  usage_stats?: {
+    total_claims: number;
+    total_savings: number;
+    can_claim_more: boolean;
+    next_available_claim: string | null;
+  };
+  tier_info?: {
+    tier: number;
+    tier_name: string;
+    tier_multiplier: number;
+  };
 }
 
 export const CouponTracker: React.FC<CouponTrackerProps> = ({ user }) => {
@@ -143,6 +165,36 @@ export const CouponTracker: React.FC<CouponTrackerProps> = ({ user }) => {
     }
   };
 
+  const getUsageTypeIcon = (usageType: string) => {
+    switch (usageType) {
+      case 'single_use':
+        return <Users className="h-3 w-3" />;
+      case 'multi_use':
+        return <Repeat className="h-3 w-3" />;
+      case 'unlimited':
+        return <Infinity className="h-3 w-3" />;
+      case 'tiered':
+        return <Trophy className="h-3 w-3" />;
+      default:
+        return <Users className="h-3 w-3" />;
+    }
+  };
+
+  const getUsageTypeLabel = (usageType: string, maxClaims?: number) => {
+    switch (usageType) {
+      case 'single_use':
+        return 'One-time use';
+      case 'multi_use':
+        return `Up to ${maxClaims}x`;
+      case 'unlimited':
+        return 'Unlimited';
+      case 'tiered':
+        return 'Loyalty rewards';
+      default:
+        return 'One-time use';
+    }
+  };
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'active':
@@ -217,6 +269,37 @@ export const CouponTracker: React.FC<CouponTrackerProps> = ({ user }) => {
                 <span>{coupon.discount}</span>
               </div>
             </div>
+
+            {/* Usage Type and Stats */}
+            {(coupon.offer?.usage_type || coupon.usage_stats) && (
+              <div className="flex flex-wrap gap-2 mb-3">
+                {/* Usage type badge */}
+                {coupon.offer?.usage_type && (
+                  <Badge variant="outline" className="text-xs">
+                    {getUsageTypeIcon(coupon.offer.usage_type)}
+                    <span className="ml-1">
+                      {getUsageTypeLabel(coupon.offer.usage_type, coupon.offer.max_claims_per_user)}
+                    </span>
+                  </Badge>
+                )}
+
+                {/* Usage statistics */}
+                {coupon.usage_stats && (
+                  <Badge variant="outline" className="text-xs bg-green-50 border-green-200 text-green-700">
+                    <TrendingUp className="h-3 w-3 mr-1" />
+                    {coupon.usage_stats.total_claims} claims
+                  </Badge>
+                )}
+
+                {/* Tier information */}
+                {coupon.tier_info && (
+                  <Badge variant="outline" className="text-xs bg-yellow-50 border-yellow-200 text-yellow-700">
+                    <Trophy className="h-3 w-3 mr-1" />
+                    {coupon.tier_info.tier_name}
+                  </Badge>
+                )}
+              </div>
+            )}
 
             {/* Metadata */}
             <div className="flex items-center justify-between text-xs text-neutral-medium">

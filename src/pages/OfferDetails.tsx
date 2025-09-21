@@ -8,9 +8,10 @@ import { Offer, OfferType } from "@/types/offer";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { toast } from "@/hooks/use-toast";
-import { Clock, Code, ChevronLeft, QrCode, Copy, Link2, Bookmark, Share2, Loader2, BookmarkCheck, BadgeCent, BadgeCheck, Verified } from "lucide-react";
+import { Clock, Code, ChevronLeft, QrCode, Copy, Link2, Bookmark, Share2, Loader2, BookmarkCheck, BadgeCent, BadgeCheck, Verified, Repeat, Infinity, Trophy, Users, TrendingUp, Calendar } from "lucide-react";
 import axiosInstance from "@/api/axios";
-import { Coupon } from "@/types/coupon";
+import { Coupon, CouponClaimResponse } from "@/types/coupon";
+import { UsageType, ClaimAvailability, UsageStats } from "@/types/offer";
 import { set } from "date-fns";
 import { ConfirmModal } from "@/components/confirmModal";
 import { useConfirmModal } from "@/hooks/use-confirm-modal";
@@ -105,6 +106,34 @@ const OfferDetails: React.FC = () => {
   const [offer, setOffer] = React.useState<Offer | null>(null);
   const [coupon, setCoupon] = React.useState<Coupon | null>(null);
   const [fetchingCoupon, setFetchingCoupon] = React.useState(false);
+  const [usageStats, setUsageStats] = React.useState<UsageStats | null>(null);
+  const [claimAvailability, setClaimAvailability] = React.useState<ClaimAvailability | null>(null);
+  const [loadingUsageInfo, setLoadingUsageInfo] = React.useState(false);
+
+  const fetchUsageInfo = async () => {
+    if (!id) return;
+    
+    try {
+      setLoadingUsageInfo(true);
+      const [usageResponse, availabilityResponse] = await Promise.all([
+        axiosInstance.get(`/offer/${id}/usage-stats`),
+        axiosInstance.get(`/offer/${id}/available-claims`)
+      ]);
+      
+      if (usageResponse.data) {
+        setUsageStats(usageResponse.data.data.usage_stats);
+      }
+      
+      if (availabilityResponse.data) {
+        setClaimAvailability(availabilityResponse.data.data);
+      }
+    } catch (error) {
+      // Usage info is optional, don't show error toast for missing data
+      console.log("Could not fetch usage info:", error.message);
+    } finally {
+      setLoadingUsageInfo(false);
+    }
+  };
 
   const fetchOffer = async () => {
     try {
@@ -115,8 +144,10 @@ const OfferDetails: React.FC = () => {
       }
       const { data } = couponData.data;
       setOffer(data);
+      
+      // Fetch usage info after getting offer
+      await fetchUsageInfo();
     } catch (error) {
-
       toast({
         title: "Error fetching offer",
         description: error.message,
@@ -138,13 +169,16 @@ const OfferDetails: React.FC = () => {
       setCoupon(data);
       setIsRevealed(true);
       offer.coupons.total -= 1;
+      
+      // Update usage stats after successful claim
+      await fetchUsageInfo();
+      
       toast({
         title: message || "Coupon generated",
         description: description || "Coupon code has been generated successfully",
         variant: "success",
       });
     } catch (error) {
-
       if (error.response && error.response.status === 409) {
         setIsRevealed(true);
         setCoupon(error.response.data.data);
@@ -167,8 +201,8 @@ const OfferDetails: React.FC = () => {
         });
       } else {
         toast({
-          title: error.response.data.message || error.message || "Error fetching coupon",
-          description: error.response.data.description || "An error occurred while fetching the coupon code. Please try again.",
+          title: error.response?.data?.message || error.message || "Error fetching coupon",
+          description: error.response?.data?.description || "An error occurred while fetching the coupon code. Please try again.",
           variant: "destructive",
         });
       }
@@ -225,6 +259,36 @@ const OfferDetails: React.FC = () => {
         description: "The coupon code has been copied to your clipboard",
       });
       setTimeout(() => setIsCopied(false), 3000);
+    }
+  };
+
+  // Get usage type display info
+  const getUsageTypeInfo = (usageType: UsageType) => {
+    switch (usageType) {
+      case UsageType.SINGLE_USE:
+        return { icon: Users, label: "One-time use", color: "bg-blue-100 text-blue-700" };
+      case UsageType.MULTI_USE:
+        return { icon: Repeat, label: `Up to ${offer?.max_claims_per_user}x`, color: "bg-green-100 text-green-700" };
+      case UsageType.UNLIMITED:
+        return { icon: Infinity, label: "Unlimited", color: "bg-purple-100 text-purple-700" };
+      case UsageType.TIERED:
+        return { icon: Trophy, label: "Loyalty rewards", color: "bg-yellow-100 text-yellow-700" };
+      default:
+        return { icon: Users, label: "One-time use", color: "bg-blue-100 text-blue-700" };
+    }
+  };
+
+  // Format next available claim time
+  const formatNextClaimTime = (dateString: string) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffHours = Math.ceil((date.getTime() - now.getTime()) / (1000 * 60 * 60));
+    
+    if (diffHours <= 24) {
+      return `${diffHours} hours`;
+    } else {
+      const diffDays = Math.ceil(diffHours / 24);
+      return `${diffDays} days`;
     }
   };
 
@@ -340,7 +404,90 @@ const OfferDetails: React.FC = () => {
 
                 {/* Offer Title and Description */}
                 <h1 className="text-2xl md:text-3xl font-bold mb-3 text-text-primary">{offer.title}</h1>
-                <p className="text-text-secondary mb-6">{offer.description}</p>
+                <p className="text-text-secondary mb-4">{offer.description}</p>
+
+                {/* Usage Type and Statistics */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                  {/* Usage Type Info */}
+                  <Card className="border-border-subtle">
+                    <CardContent className="p-4">
+                      <div className="flex items-center gap-3">
+                        {(() => {
+                          const usageTypeInfo = getUsageTypeInfo(offer.usage_type || UsageType.SINGLE_USE);
+                          const UsageIcon = usageTypeInfo.icon;
+                          return (
+                            <>
+                              <div className={`p-2 rounded-full ${usageTypeInfo.color.replace('text-', 'bg-').replace('-700', '-200')}`}>
+                                <UsageIcon className="h-4 w-4" />
+                              </div>
+                              <div>
+                                <p className="text-sm font-medium text-text-primary">Usage Type</p>
+                                <p className="text-text-secondary text-sm">{usageTypeInfo.label}</p>
+                                {offer.cooldown_period_hours && (
+                                  <p className="text-xs text-text-tertiary">
+                                    {offer.cooldown_period_hours}h cooldown
+                                  </p>
+                                )}
+                              </div>
+                            </>
+                          );
+                        })()}
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  {/* User Usage Statistics */}
+                  {usageStats && (
+                    <Card className="border-border-subtle">
+                      <CardContent className="p-4">
+                        <div className="flex items-center gap-3">
+                          <div className="p-2 rounded-full bg-green-100">
+                            <TrendingUp className="h-4 w-4 text-green-700" />
+                          </div>
+                          <div>
+                            <p className="text-sm font-medium text-text-primary">Your Stats</p>
+                            <div className="flex gap-4 text-sm text-text-secondary">
+                              <span>{usageStats.usage_count} claimed</span>
+                              {usageStats.total_savings > 0 && (
+                                <span>${(usageStats.total_savings / 100).toFixed(2)} saved</span>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  )}
+                </div>
+
+                {/* Claim Availability Alert */}
+                {claimAvailability && !claimAvailability.can_claim_now && (
+                  <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
+                    <div className="flex items-center gap-2">
+                      <Clock className="h-4 w-4 text-yellow-700" />
+                      <p className="text-sm font-medium text-yellow-700">Claim Not Available</p>
+                    </div>
+                    <p className="text-sm text-yellow-600 mt-1">
+                      {claimAvailability.reason}
+                      {claimAvailability.next_available_claim && (
+                        <span className="block mt-1">
+                          Next claim available in {formatNextClaimTime(claimAvailability.next_available_claim)}
+                        </span>
+                      )}
+                    </p>
+                  </div>
+                )}
+
+                {/* Remaining Claims Info */}
+                {claimAvailability && claimAvailability.can_claim_now && claimAvailability.remaining_claims !== "unlimited" && (
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+                    <div className="flex items-center gap-2">
+                      <Repeat className="h-4 w-4 text-blue-700" />
+                      <p className="text-sm font-medium text-blue-700">
+                        {claimAvailability.remaining_claims} claims remaining for you
+                      </p>
+                    </div>
+                  </div>
+                )}
 
                 {/* Tabs for Details and Terms */}
                 <Tabs defaultValue="details" className="w-full">
@@ -443,10 +590,13 @@ const OfferDetails: React.FC = () => {
                                   </div>
                                   <Button
                                     onClick={handleRevealCode}
-                                    className="bg-brand-primary hover:bg-brand-primary/90 text-white z-10"
+                                    disabled={claimAvailability && !claimAvailability.can_claim_now}
+                                    className="bg-brand-primary hover:bg-brand-primary/90 text-white z-10 disabled:bg-gray-400 disabled:cursor-not-allowed"
                                   >
                                     {fetchingCoupon ? (
                                       <Loader2 className="animate-spin h-4 w-4" />
+                                    ) : claimAvailability && !claimAvailability.can_claim_now ? (
+                                      <span>Cannot Claim</span>
                                     ) : (
                                       <span>Reveal Code</span>
                                     )}
