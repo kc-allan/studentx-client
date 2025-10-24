@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { BadgeCheck, Star } from "lucide-react";
+import { BadgeCheck, ExternalLink, Sparkles, Star } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import axiosInstance from "@/api/axios";
 import { useNavigate } from "react-router-dom";
@@ -8,6 +8,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 
 const ProviderHighlights = () => {
   const navigate = useNavigate();
+  const [featureMerchants, setFeatureMerchants] = React.useState<boolean>(false);
   const [merchants, setMerchants] = React.useState([
     {
       id: "1",
@@ -156,6 +157,49 @@ const ProviderHighlights = () => {
         variant: `${error.response.status.toLocaleString().startsWith(4) ? "warning" : "destructive"}`
       });
     }
+  }
+  if (!featureMerchants) {
+    return (
+      <section
+        style={{
+          backgroundImage: `url("/trusted-partner.webp")`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+        }}
+        className="py-20 w-full relative overflow-hidden">
+        {/* Gradient Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-50/90 to-slate-50/95"></div>
+        <div className="relative max-w-4xl mx-auto px-4 text-center z-10">
+          <div className="inline-flex items-center px-4 py-2 rounded-full bg-brand-primary/10 text-brand-primary text-sm font-medium mb-4">
+            <Sparkles className="h-5 w-5 mr-2" />
+            Coming Soon
+          </div>
+          <h2 className="text-3xl font-bold text-gray-900 mb-6">
+            Exclusive Student Partnerships
+          </h2>
+          <div className="space-y-4 text-gray-600 mb-8">
+            <p className="text-lg leading-relaxed">
+              We're building meaningful partnerships with vendors that share our mission to bring you exclusive discounts and offers.
+            </p>
+            <p className="text-lg leading-relaxed">
+              Stay tuned for amazing deals from your favorite brands!
+            </p>
+          </div>
+          <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 max-w-md mx-auto mb-8">
+            <h3 className="font-semibold text-gray-900 mb-3">Are you a business?</h3>
+            <p className="text-gray-600 text-sm mb-4">
+              Reach thousands of students with your products or services. Get in touch to learn about partnership opportunities.
+            </p>
+            <a href="mailto:info@studentx.co.ke?subject=Partnership%20Inquiry&body=I%20am%20interested%20in%20partnering%20with%20StudentX%20to%20offer%20exclusive%20discounts%20to%20students.%20Please%20provide%20more%20information.">
+              <button className="w-full bg-brand-primary hover:bg-brand-primary/90 text-white font-medium py-3 px-6 rounded-lg transition-all duration-200 shadow-sm hover:shadow-md flex items-center justify-center">
+                Contact Us
+                <ExternalLink className="h-4 w-4 ml-2" />
+              </button>
+            </a>
+          </div>
+        </div>
+      </section >
+    );
   }
   return (
     <section className="py-20 w-full bg-slate-100">
