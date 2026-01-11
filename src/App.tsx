@@ -59,6 +59,10 @@ const App = () => {
       if (s1.parentNode) {
         s1.parentNode.removeChild(s1);
       }
+      // @ts-ignore
+      delete window.Tawk_API;
+      // @ts-ignore
+      delete window.Tawk_LoadStart;
     };
   }, [user]);
   return (

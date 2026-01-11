@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Clock, ShoppingCart, Zap } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import axiosInstance from "@/api/axios";
 import { toast } from "@/hooks/use-toast";
 import OfferCard from "./offers/OfferCard";
@@ -21,12 +21,14 @@ const LatestOffers = () => {
       }
       const offers = response.data.data;
       setRecentOffers(offers);
-    } catch (error) {
-
+    } catch (error: any) {
+      const message = error.response?.data?.message || error.message || "An error occurred";
+      const status = error.response?.status;
+      
       toast({
-        title: error.response.data?.message || error.message || "An error occurred",
-        description: error.response.data?.message || "Something went wrong while getting recent offers. It's not you it's us",
-        variant: `${error.response.status.toLocaleString().startsWith(4) ? "warning" : "destructive"}`
+        title: message,
+        description: "Something went wrong while getting recent offers. It's not you it's us",
+        variant: status?.toString().startsWith("4") ? "warning" : "destructive"
       });
     } finally {
       setLoading(false);
@@ -77,6 +79,7 @@ const LatestOffers = () => {
               autoPlay
               loop
               muted
+              playsInline
               src="/coming-soon.webm"
               className="w-28 mb-6 opacity-85"
             />
@@ -100,7 +103,7 @@ const LatestOffers = () => {
           <Link to="/deals">
             <Button
               variant="outline"
-              className="md: hidden mt-4 md:mt-0 border-brand-primary text-brand-primary hover:bg-brand-primary/5"
+              className="md:hidden mt-4 md:mt-0 border-brand-primary text-brand-primary hover:bg-brand-primary/5"
             >
               View All <ArrowRight className="ml-2 h-4 w-4" />
             </Button>

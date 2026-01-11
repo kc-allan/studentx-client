@@ -90,6 +90,7 @@ const LatestOffers = () => {
               autoPlay
               loop
               muted
+              playsInline
               src="/coming-soon.webm"
               className="w-28 mb-6 opacity-85"
             />
