@@ -91,18 +91,32 @@ const AuthPage = () => {
         throw new Error(response.data.message);
       }
       const { message, user, user_role } = response.data
+      
+      // Check if this is a new user who needs onboarding
+      const isNewUser = localStorage.getItem('is_new_user') === 'true';
+      const onboardingCompleted = localStorage.getItem('onboarding_completed');
+      
       toast({
         title: message,
-        description: `Welcome back, ${user.first_name}!`,
+        description: isNewUser && !onboardingCompleted 
+          ? `Welcome, ${user.first_name}! Let's get you set up.`
+          : `Welcome back, ${user.first_name}!`,
         variant: "success",
       })
+      
       dispatch(
         setCurrentUser({
           user: user,
           role: user_role,
         })
       );
-      navigate(next || "/");
+      
+      // Redirect new users to profile for onboarding, others to their destination
+      if (isNewUser && !onboardingCompleted) {
+        navigate('/me?onboarding=true');
+      } else {
+        navigate(next || "/");
+      }
     } catch (error) {
 
       toast({
@@ -156,6 +170,9 @@ const AuthPage = () => {
       }
       const { message, username } = response.data
 
+      // Mark as new user for onboarding
+      localStorage.setItem('is_new_user', 'true');
+      localStorage.removeItem('onboarding_completed');
 
       toast({
         title: message,
@@ -233,13 +250,13 @@ const AuthPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-br from-blue-50 to-indigo-50">
+    <div className="min-h-screen flex flex-col bg-linear-to-br from-blue-50 to-indigo-50">
       <main className="flex-grow flex md:items-center justify-center md:p-4">
         <div className={`w-full max-w-6xl flex flex-col ${activeForm === "login" ? "md:flex-row" : "md:flex-row-reverse"} overflow-hidden md:rounded-xl shadow-2xl transition-all duration-500`}>
           {/* Info Panel */}
           <div className={`w-full relative md:w-1/2 flex flex-col justify-center p-6 md:p-16 text-white ${activeForm === "login"
-            ? "bg-gradient-to-br from-blue-900 to-black"
-            : "bg-gradient-to-br from-blue-900 to-black"}`}>
+            ? "bg-linear-to-br from-blue-900 to-black"
+            : "bg-linear-to-br from-blue-900 to-black"}`}>
             <Link to="/" className="flex absolute z-50 top-4 left-6 items-center space-x-2 min-w-max">
               <Zap className="h-6 w-6 text-brand-primary" />
               <h1 className="text-xl font-bold text-text-inverted">
@@ -388,7 +405,7 @@ const AuthPage = () => {
 
                       <Button
                         type="submit"
-                        className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white"
+                        className="w-full bg-linear-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white"
                         disabled={isSubmitting}
                       >
                         {isSubmitting ? (
@@ -601,7 +618,7 @@ const AuthPage = () => {
 
                       <Button
                         type="submit"
-                        className="w-full mt-2 bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white"
+                        className="w-full mt-2 bg-linear-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white"
                         disabled={isSubmitting || !agreeTerms}
                       >
                         {isSubmitting ? (

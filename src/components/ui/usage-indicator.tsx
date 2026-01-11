@@ -214,7 +214,7 @@ export const UsageIndicator: React.FC<UsageIndicatorProps> = ({
 
       {/* Tier Information for Tiered Offers */}
       {usageType === UsageType.TIERED && usageStats && (
-        <div className="p-3 bg-gradient-to-r from-yellow-50 to-amber-50 rounded-lg border border-yellow-200">
+        <div className="p-3 bg-linear-to-r from-yellow-50 to-amber-50 rounded-lg border border-yellow-200">
           <div className="flex items-center gap-2 mb-2">
             <Trophy className="h-4 w-4 text-yellow-700" />
             <span className="font-medium text-yellow-800">Loyalty Progress</span>

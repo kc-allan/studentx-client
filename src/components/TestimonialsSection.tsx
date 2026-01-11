@@ -40,7 +40,6 @@ const TestimonialsSection = () => {
         }
         setTestimonials(response.data.data);
       } catch (error) {
-        console.error("Error fetching testimonials:", error);
         toast({
           title: error.response?.data?.message || "An unexpected error occurred",
           description: error instanceof Error ? error.message : "Failed to fetch testimonials",

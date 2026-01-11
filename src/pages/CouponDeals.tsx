@@ -251,7 +251,7 @@ const CouponDeals = () => {
       <Header />
 
       {/* Hero Banner */}
-      <div className="bg-gradient-to-r from-blue-900 to-black text-white pt-24 pb-12 w-full">
+      <div className="bg-linear-to-r from-blue-900 to-black text-white pt-24 pb-12 w-full">
         <div className="container px-4">
           <div className="flex flex-col items-center text-center">
             <Badge className="mb-4 bg-indigo-900 hover:bg-indigo-900">New Arrivals</Badge>

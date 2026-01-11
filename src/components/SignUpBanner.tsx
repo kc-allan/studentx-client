@@ -5,7 +5,7 @@ import { Zap, ArrowRight } from "lucide-react";
 
 const SignUpBanner = () => {
   return (
-    <section className="py-16 h-100 w-[90%] rounded-lg absolute -translate-y-[60%] left-1/2 -translate-x-1/2  bg-gradient-to-br from-brand-primary/60 via-neutral-700 to-gray-900 overflow-hidden">
+    <section className="py-16 h-100 w-[90%] rounded-lg absolute -translate-y-[60%] left-1/2 -translate-x-1/2  bg-linear-to-br from-brand-primary/60 via-neutral-700 to-gray-900 overflow-hidden">
       {/* Abstract background elements */}
       <div className="absolute inset-0 overflow-hidden opacity-10">
         <div className="absolute rounded-full h-80 w-80 bg-brand-accent -top-20 -right-20"></div>

@@ -32,6 +32,7 @@ import { Link } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { toast } from '@/hooks/use-toast';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from "@/components/ui/dialog";
+import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 
 interface CouponTrackerProps {
   user: {
@@ -232,13 +233,16 @@ export const CouponTracker: React.FC<CouponTrackerProps> = ({ user }) => {
       <CardContent className="p-6">
         <div className="flex items-start gap-4">
           {/* Brand Logo */}
-          <div className="w-12 h-12 rounded-xl bg-background-subtle flex items-center justify-center border border-neutral-lighter">
-            <img
+          <Avatar className="w-12 h-12 rounded-xl border border-neutral-lighter">
+            <AvatarImage
               src={coupon.brandLogo}
               alt={coupon.brand}
-              className="w-12 h-12 object-cover rounded-xl"
+              className="object-cover"
             />
-          </div>
+            <AvatarFallback className="bg-background-subtle rounded-xl">
+              {coupon.brand.substring(0, 2).toUpperCase()}
+            </AvatarFallback>
+          </Avatar>
 
           {/* Content */}
           <div className="flex-1">
@@ -308,7 +312,7 @@ export const CouponTracker: React.FC<CouponTrackerProps> = ({ user }) => {
                   <Calendar className="h-3 w-3" />
                   <span>Expires {formatDate(coupon.expiryDate)}</span>
                 </div>
-                
+
               </div>
               <Badge variant="outline" className="text-xs">
                 {coupon.category.name}

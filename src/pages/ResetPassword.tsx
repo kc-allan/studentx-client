@@ -24,7 +24,6 @@ const ResetPassword: React.FC = () => {
 				});
 			}
 		} catch (error) {
-			console.error("Error sending reset link:", error);
 			toast({
 				title: error.response?.data.message || "Error",
 				description: error.response?.data.description || error.message || "Failed to send reset link. Please try again.",
@@ -37,7 +36,7 @@ const ResetPassword: React.FC = () => {
 	};
 
 	return (
-		<div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
+		<div className="min-h-screen flex items-center justify-center bg-linear-to-br from-blue-50 to-indigo-100 p-4">
 			<Card className="w-full max-w-md bg-white shadow-lg rounded-lg">
 				<CardHeader className="text-center">
 					<div className="mx-auto w-12 h-12 bg-black rounded-lg flex items-center justify-center mb-4">

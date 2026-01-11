@@ -72,7 +72,7 @@ const LatestOffers = () => {
             ))}
           </div>
         ) : (
-          <div className="flex flex-col items-center justify-center p-12 sm:p-8 bg-gradient-to-br from-gray-50 to-indigo-100 min-h-[320px]">
+          <div className="flex flex-col items-center justify-center p-12 sm:p-8 bg-linear-to-br from-gray-50 to-indigo-100 min-h-[320px]">
             <video
               autoPlay
               loop

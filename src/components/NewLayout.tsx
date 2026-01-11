@@ -51,7 +51,7 @@ const LatestOffers = () => {
   }, []);
 
   return (
-    <section className={`${SECTION_STYLES} bg-gradient-to-b from-background to-background-soft`}>
+    <section className={`${SECTION_STYLES} bg-linear-to-b from-background to-background-soft`}>
       <div className={CONTAINER_STYLES}>
         <div className="flex flex-col md:flex-row justify-between items-center mb-12">
           <div className="text-center md:text-left">
@@ -135,7 +135,6 @@ const CategoryList: React.FC = () => {
       const categories = response.data.data
       setCategories(categories);
     } catch (error) {
-      console.error(error)
       toast({
         title: error.response.data?.message || error.message || "An error occurred",
         description: error.response.data?.message || "Something went wrong while getting offer categories. It's not you it's us",

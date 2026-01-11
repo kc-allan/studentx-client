@@ -1,5 +1,5 @@
-
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -59,21 +59,44 @@ import { SavedDeals } from "@/components/profile/SavedDeals";
 import { PreferencesSettings } from "@/components/profile/PreferencesSettings";
 import { AccountSettings } from "@/components/profile/AccountSettings";
 import { ActivityStats } from "@/components/profile/ActivityStats";
-import { Header } from '@radix-ui/react-accordion';
+import { OnboardingChecklist } from "@/components/profile/OnboardingChecklist";
 import { CouponTracker } from '@/components/profile/CouponTracker';
+import { OnboardingWizard } from '@/components/onboarding/OnboardingWizard';
 import { toast } from '@/hooks/use-toast';
 import axiosInstance from '@/api/axios';
 
 const Profile = () => {
+	const navigate = useNavigate();
 	const urlParams = new URLSearchParams(window.location.search);
 	const [activeTab, setActiveTabFn] = useState(urlParams.get('tab') || "account");
 	const [userData, setUserData] = useState(null);
 	const [fetchingProfile, setFetchingProfile] = useState(false);
 
+	// Onboarding wizard state
+	const shouldShowOnboarding = urlParams.get('onboarding') === 'true';
+	const [showOnboardingWizard, setShowOnboardingWizard] = useState(false);
+
 	const setActiveTab = (tab: string) => {
-		setActiveTabFn(tab);
-		urlParams.set('tab', tab);
+		const [xtab, params] = tab.split('?');
+		setActiveTabFn(xtab);
+		urlParams.set('tab', xtab);
+		// Remove onboarding param when switching tabs
+		urlParams.delete('onboarding');
 		window.history.replaceState({}, '', `${window.location.pathname}?${urlParams.toString()}`);
+		if (params) {
+			// Handle any additional params (like scrollTo)
+			const paramPairs = new URLSearchParams(params);
+			const scrollToId = paramPairs.get('scrollTo');
+			if (scrollToId) {
+				// Wait for the DOM to update after tab change before scrolling
+				setTimeout(() => {
+					const element = document.getElementById(scrollToId);
+					if (element) {
+						element.scrollIntoView({ behavior: 'smooth' });
+					}
+				}, 100);
+			}
+		}
 	};
 
 	// Mock user data - in real app this would come from API/context
@@ -106,7 +129,7 @@ const Profile = () => {
 			}
 			setUserData(response.data.data);
 		} catch (error) {
-			
+
 			toast({
 				title: error.response.data.message || error.message || "Error populating profile",
 				description: error.response.data.description || "Failed to load user data. Please try again later.",
@@ -121,10 +144,58 @@ const Profile = () => {
 		fetchUserData();
 	}, []);
 
+	// Check for onboarding trigger after user data is loaded
+	useEffect(() => {
+		if (userData && shouldShowOnboarding) {
+			const onboardingCompleted = localStorage.getItem('onboarding_completed');
+			if (!onboardingCompleted) {
+				setShowOnboardingWizard(true);
+			}
+			// Clean up URL
+			urlParams.delete('onboarding');
+			window.history.replaceState({}, '', `${window.location.pathname}?${urlParams.toString()}`);
+		}
+	}, [userData, shouldShowOnboarding]);
+
+	// Handle onboarding wizard completion
+	const handleOnboardingComplete = () => {
+		setShowOnboardingWizard(false);
+		// Clear new user flag
+		localStorage.removeItem('is_new_user');
+		// Refresh user data to get any updates made during onboarding
+		fetchUserData();
+		toast({
+			title: 'Welcome to StudentX!',
+			description: 'Your profile is set up. Start exploring exclusive student deals!',
+			variant: 'default'
+		});
+	};
+
+	// Handle onboarding wizard close (skip)
+	const handleOnboardingClose = () => {
+		setShowOnboardingWizard(false);
+		// Clean up URL
+		urlParams.delete('onboarding');
+		window.history.replaceState({}, '', `${window.location.pathname}?${urlParams.toString()}`);
+	};
+
+	// Open onboarding wizard manually (from checklist)
+	const handleOpenOnboarding = () => {
+		setShowOnboardingWizard(true);
+	};
+
 	// Check for empty/new user states
-	const isNewUser = userData?.totalSavings === 0 && userData.dealsUsed === 0;
+	const isNewUser = userData?.totalSavings === 0 && userData?.dealsUsed === 0;
 	const hasNoSavedDeals = false; // This would come from saved deals data
 	const hasLowVerification = userData?.verificationLevel < 50;
+
+	// Check if profile needs completion (for checklist)
+	const isProfileIncomplete = userData && (
+		!userData.phone ||
+		!userData.major ||
+		!userData.studentId ||
+		!userData.isVerified
+	);
 
 	return (
 		<div>
@@ -150,14 +221,36 @@ const Profile = () => {
 				</div>
 			) : (
 				<div className="min-h-screen bg-background-lighter">
+					{/* Onboarding Wizard */}
+					{showOnboardingWizard && userData && (
+						<OnboardingWizard
+							isOpen={showOnboardingWizard}
+							onClose={handleOnboardingClose}
+							onComplete={handleOnboardingComplete}
+							user={userData}
+						/>
+					)}
+
 					{/* Header */}
 					<ProfileHeader user={userData} />
 
 					{/* Main Content */}
 					<div className="container mx-auto px-4 sm:px-6 lg:px-8 pb-8 max-w-7xl">
+						{/* Onboarding Checklist - shows for users with incomplete profiles */}
+						{isProfileIncomplete && !showOnboardingWizard && (
+							<div className="mt-4">
+								<OnboardingChecklist
+									user={userData}
+									onNavigateToTab={setActiveTab}
+									onOpenOnboarding={handleOpenOnboarding}
+									onDismiss={() => { }}
+								/>
+							</div>
+						)}
+
 						<Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
 							{/* Navigation Tabs - Responsive */}
-							<div className="bg-white rounded-xl mt-4 shadow-sm border border-neutral-lighter mb-6 overflow-hidden">
+							<div className={`bg-white rounded-xl ${isProfileIncomplete ? '' : 'mt-4'} shadow-sm border border-neutral-lighter mb-6 overflow-hidden`}>
 								<TabsList className="flex justify-between overflow-x-auto w-full p-2 h-auto bg-transparent gap-4 *:w-full">
 									{/* <TabsTrigger
 									value="overview"
@@ -210,7 +303,7 @@ const Profile = () => {
 								{isNewUser ? (
 									// New User Welcome State
 									<div className="text-center py-12">
-										<Card className="border-brand-primary/20 bg-gradient-to-r from-brand-primary/5 to-brand-accent/5 max-w-2xl mx-auto">
+										<Card className="border-brand-primary/20 bg-linear-to-r from-brand-primary/5 to-brand-accent/5 max-w-2xl mx-auto">
 											<CardContent className="p-8 sm:p-12">
 												<div className="w-16 h-16 bg-brand-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
 													<Star className="h-8 w-8 text-brand-primary" />

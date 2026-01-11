@@ -41,7 +41,6 @@ export const FlexibleOfferExample: React.FC<FlexibleOfferExampleProps> = ({
     const result = await claimCoupon();
     if (result) {
       // Handle successful claim
-      console.log('Coupon claimed successfully:', result);
     }
   };
 

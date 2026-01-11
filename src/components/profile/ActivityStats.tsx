@@ -100,7 +100,7 @@ export const ActivityStats: React.FC<ActivityStatsProps> = ({ user }) => {
         </div>
 
         {/* Getting Started Guide */}
-        <Card className="border-brand-primary/20 bg-gradient-to-r from-brand-primary/5 to-brand-accent/5">
+        <Card className="border-brand-primary/20 bg-linear-to-r from-brand-primary/5 to-brand-accent/5">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Star className="h-5 w-5 text-brand-primary" />

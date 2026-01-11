@@ -15,7 +15,7 @@ const CategoriesSkeleton = () => (
     {Array.from({ length: 8 }).map((_, index) => (
       <Card className="h-full border bg-gray-50 hover:border-brand-primary/30 transition-all animate-pulse overflow-hidden">
                     <div className="relative aspect-square overflow-hidden h-48 w-full">
-          <div className="absolute inset-0 bg-gradient-to-t from-black to-gray-300 z-10" />
+          <div className="absolute inset-0 bg-linear-to-t from-black to-gray-300 z-10" />
           <div
 
             className="w-full h-full group-hover:scale-105 transition-transform duration-300"
@@ -70,7 +70,7 @@ const Categories = () => {
       <Header />
       <main className="flex-grow w-full pt-24">
         {/* Hero Section */}
-        <div className="bg-gradient-to-r from-brand-primary/5 to-brand-secondary/5 py-6">
+        <div className="bg-linear-to-r from-brand-primary/5 to-brand-secondary/5 py-6">
           <div className="container  px-4 text-center">
             <div className="inline-flex items-center px-4 py-2 rounded-full bg-brand-primary/10 text-brand-primary text-sm font-medium mb-4">
               <Zap className="h-4 w-4 mr-2" />
@@ -111,7 +111,7 @@ const Categories = () => {
                 >
                   <Card className="h-full border bg-gray-50 hover:border-brand-primary/30 transition-all overflow-hidden">
                     <div className="relative aspect-square overflow-hidden h-48 w-full">
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-10" />
+                      <div className="absolute inset-0 bg-linear-to-t from-black/60 to-transparent z-10" />
                       <img
                         src={category.imageURL || "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1471&q=80"}
                         alt={category.name}

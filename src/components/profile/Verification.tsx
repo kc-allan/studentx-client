@@ -32,7 +32,7 @@ interface VerificationTasksProps {
     university: string;
     firstName: string;
     lastName: string;
-    birthDate?: string;
+    dateOfBirth?: string;
     verificationStatus: 'pending' | 'in_progress' | 'requested' | 'completed' | 'failed' | 'rejected';
   };
 }
@@ -48,13 +48,22 @@ export const VerificationTasks: React.FC<VerificationTasksProps> = ({ user, onCh
   const [verificationStatus, setVerificationStatus] = useState<'pending' | 'in_progress' | 'requested' | 'completed' | 'failed' | 'rejected'>(
     user.verificationStatus
   );
-  console.log(user);
+  const scrollToParams = new URLSearchParams(window.location.search).get('scrollTo');
 
   const [sheerIdLoaded, setSheerIdLoaded] = useState(false);
   const [verificationError, setVerificationError] = useState<string | null>(null);
   const [retryCount, setRetryCount] = useState(0);
   const [sheerIdForm, setSheerIdForm] = useState<any>(null);
   const [openModalManualVerification, setOpenModalManualVerification] = useState(false);
+
+  useEffect(() => {
+    if (scrollToParams) {
+      const element = document.getElementById(scrollToParams);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+  }, [scrollToParams]);
 
   // Load SheerID script dynamically
   // Fixed initializeSheerID function
@@ -65,7 +74,6 @@ export const VerificationTasks: React.FC<VerificationTasksProps> = ({ user, onCh
       setVerificationError('Verification service unavailable. Please try again later.');
       return;
     }
-    console.log(window)
 
     try {
       // Use the correct SheerID API - it's likely a default export with loadInModal method
@@ -88,9 +96,9 @@ export const VerificationTasks: React.FC<VerificationTasksProps> = ({ user, onCh
         lastName: user.lastName,
         email: user.email,
         phoneNumber: user.phone,
-        birthDate: user.birthDate || '',
+        dateOfBirth: user.dateOfBirth || '',
         metadata: {
-          userId: "user.id" // Replace with actual user ID from your system
+          userId: "user.id"
         }
       });
 
@@ -122,7 +130,6 @@ export const VerificationTasks: React.FC<VerificationTasksProps> = ({ user, onCh
       setSheerIdForm(form);
 
     } catch (error) {
-      console.error('Error initializing SheerID:', error);
       setVerificationStatus('failed');
       setVerificationError('Failed to initialize verification service.');
     }
@@ -192,7 +199,6 @@ export const VerificationTasks: React.FC<VerificationTasksProps> = ({ user, onCh
 
   const handleVerificationSubmit = (data: any) => {
     // Handle the form submission logic here
-    console.log('Manual verification submitted:', data);
     setOpenModalManualVerification(false);
     setVerificationStatus('in_progress');
     // You can also call initializeSheerID() here if needed
@@ -200,7 +206,6 @@ export const VerificationTasks: React.FC<VerificationTasksProps> = ({ user, onCh
 
   const handleVerificationResubmit = (data: any) => {
     // Handle the form resubmission logic here
-    console.log('Manual verification resubmitted:', data);
     setOpenModalManualVerification(false);
     setVerificationStatus('in_progress');
     // You can also call initializeSheerID() here if needed
@@ -528,7 +533,7 @@ export const VerificationTasks: React.FC<VerificationTasksProps> = ({ user, onCh
       </div>
 
       {/* Benefits Card */}
-      <Card className="border-brand-primary/20 bg-gradient-to-r from-brand-primary/5 to-brand-accent/5">
+      <Card className="border-brand-primary/20 bg-linear-to-r from-brand-primary/5 to-brand-accent/5">
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-lg">
             <Award className="h-5 w-5 text-brand-primary" />

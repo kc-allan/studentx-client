@@ -93,7 +93,7 @@ const FeaturedOffers = () => {
             backgroundPosition: mobile ? "center" : "right center"
           }}
         >
-          <div className="absolute inset-0 bg-gradient-to-t from-gray-900/95 via-gray-900/80 to-black md:bg-gradient-to-r md:from-gray-900/90 md:via-gray-900/90 md:to-transparent"></div>
+          <div className="absolute inset-0 bg-linear-to-t from-gray-900/95 via-gray-900/80 to-black md:bg-linear-to-r md:from-gray-900/90 md:via-gray-900/90 md:to-transparent"></div>
         </div>
       </div>
 

@@ -129,7 +129,6 @@ const OfferDetails: React.FC = () => {
       }
     } catch (error) {
       // Usage info is optional, don't show error toast for missing data
-      console.log("Could not fetch usage info:", error.message);
     } finally {
       setLoadingUsageInfo(false);
     }
@@ -183,7 +182,6 @@ const OfferDetails: React.FC = () => {
         setIsRevealed(true);
         setCoupon(error.response.data.data);
       } else if (error.response && error.response.status === 403) {
-        console.error("Forbidden error:", error.response.data);
         setAlert(true);
         openModal({
           title: error.response.data.message || "Action Not Allowed",
@@ -585,7 +583,7 @@ const OfferDetails: React.FC = () => {
                                 </div>
                               ) : (
                                 <div className="relative w-full aspect-square flex items-center justify-center">
-                                  <div className="absolute inset-0 blur-sm bg-gradient-to-br from-gray-300 to-gray-200 rounded flex items-center justify-center">
+                                  <div className="absolute inset-0 blur-sm bg-linear-to-br from-gray-300 to-gray-200 rounded flex items-center justify-center">
                                     <QrCode className="w-1/2 h-1/2 text-gray-400" />
                                   </div>
                                   <Button

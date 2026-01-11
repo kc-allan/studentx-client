@@ -14,7 +14,7 @@ const Hero = () => {
   return (
     <>
 
-      <section className="relative w-full bg-gradient-to-br from-neutral-900 via-neutral-950 to-black text-white overflow-hidden min-h-screen lg:pt-12 pt-20">
+      <section className="relative w-full bg-linear-to-br from-neutral-900 via-neutral-950 to-black text-white overflow-hidden min-h-screen lg:pt-12 pt-20">
         {/* Abstract background with subtle animation */}
         <div className="absolute inset-0 overflow-hidden opacity-15">
           <div className="absolute top-0 left-0 w-full h-full bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXR0ZXJuIGlkPSJwYXR0ZXJuIiB4PSIwIiB5PSIwIiB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHBhdHRlcm5Vbml0cz0idXNlclNwYWNlT25Vc2UiIHBhdHRlcm5UcmFuc2Zvcm09InJvdGF0ZSgzMCkiPjxwYXRoIGQ9Ik0tMTAgLTEwIEwyMCAtMTAgTDIwIDIwIEwtMTAgMjAgWiIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjAuNSIgZmlsbD0ibm9uZSIvPjwvcGF0dGVybj48cmVjdCB4PSIwIiB5PSIwIiB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI3BhdHRlcm4pIi8+PC9zdmc+')] animate-very-slow-pan"></div>
@@ -25,7 +25,7 @@ const Hero = () => {
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8 lg:gap-12 min-h-[80vh]">
             {/* Left side content */}
             <div className="flex-1 space-y-6 max-w-2xl">
-              {/* <div className="inline-flex items-center bg-gradient-to-r from-brand-primary to-gray-700 text-white text-sm font-medium px-4 py-1.5 rounded-full">
+              {/* <div className="inline-flex items-center bg-linear-to-r from-brand-primary to-gray-700 text-white text-sm font-medium px-4 py-1.5 rounded-full">
                 <BadgeCheck className="h-4 w-4 mr-2" />
                 <span>Student Exclusive Verified</span>
               </div> */}
@@ -84,7 +84,7 @@ const Hero = () => {
               {/* CTA buttons */}
               {!isAuthenticated && (
                 <div className="flex flex-col sm:flex-row gap-4 mt-8">
-                  <Button asChild size="lg" className="bg-gradient-to-r from-brand-primary to-brand-primary/70 hover:from-brand-primary/70 hover:to-brand-primary text-white font-bold rounded-lg shadow-lg shadow-emerald-500/20 transition-all duration-300">
+                  <Button asChild size="lg" className="bg-linear-to-r from-brand-primary to-brand-primary/70 hover:from-brand-primary/70 hover:to-brand-primary text-white font-bold rounded-lg shadow-lg shadow-emerald-500/20 transition-all duration-300">
                     <a href="/auth?page=signup">Get Started — It's Free</a>
                   </Button>
                   <Button
@@ -169,7 +169,7 @@ const Hero = () => {
 
               <div className="relative bg-white/5 backdrop-blur-lg rounded-2xl px-1 py-2 shadow-2xl border border-white/10 overflow-hidden">
                 {/* Quick stats */}
-                <div className="hidden relative bg-gradient-to-r from-emerald-500/10 to-emerald-600/10 rounded-xl p-6 text-center overflow-hidden">
+                <div className="hidden relative bg-linear-to-r from-emerald-500/10 to-emerald-600/10 rounded-xl p-6 text-center overflow-hidden">
                   <div className="absolute -right-10 -top-10 w-32 h-32 bg-emerald-500/10 rounded-full blur-xl"></div>
                   <div className="flex justify-center gap-4 lg:gap-8">
                     <div className="space-y-1">
@@ -242,7 +242,7 @@ const Hero = () => {
 
 const BenefitCard = ({ image, title, description, stats }) => (
   <div className="group w-full relative overflow-hidden rounded-xl hover:shadow-lg hover:shadow-emerald-500/10 transition-all duration-300 border border-white/10">
-    <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-black/30 z-10"></div>
+    <div className="absolute inset-0 bg-linear-to-t from-black/80 to-black/30 z-10"></div>
     <img
       src={image}
       alt={title}

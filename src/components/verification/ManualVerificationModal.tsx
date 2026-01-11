@@ -191,10 +191,14 @@ const StudentVerificationModal: React.FC<{
 			}
 
 			try {
-				console.log('Submitting verification data:', formData);
 				setIsSubmitting(true);
+				// Format dateOfBirth to YYYY-MM-DD format without time component
+				const personalInfo = {
+					...formData.personalInfo,
+					dateOfBirth: formData.personalInfo.dateOfBirth ? formData.personalInfo.dateOfBirth.split('T')[0] : ''
+				};
 				const response = await axiosInstance.post('/user/verification/student/submit', {
-					personalInfo: formData.personalInfo,
+					personalInfo,
 					academicInfo: formData.academicInfo,
 					documents: formData.documents.map(doc => ({
 						type: doc.type,
@@ -214,7 +218,6 @@ const StudentVerificationModal: React.FC<{
 					onClose();
 				}
 			} catch (error) {
-				console.error('Error submitting verification:', error);
 				toast({
 					title: error.response?.data?.message || 'Submission Failed',
 					description: error.response?.message || 'There was an error submitting your verification. Please try again later.',
@@ -352,7 +355,7 @@ const StudentVerificationModal: React.FC<{
 							type="date"
 							min={new Date(new Date().setFullYear(new Date().getFullYear() - 30)).toISOString().split("T")[0]} // Not older than 30 years
 							max={new Date(new Date().setFullYear(new Date().getFullYear() - 18)).toISOString().split("T")[0]} // must be 18 or older
-							value={formData.personalInfo.dateOfBirth}
+							value={formData.personalInfo.dateOfBirth ? formData.personalInfo.dateOfBirth.split('T')[0] : ''}
 							onChange={(e) => setFormData(prev => ({
 								...prev,
 								personalInfo: { ...prev.personalInfo, dateOfBirth: e.target.value }

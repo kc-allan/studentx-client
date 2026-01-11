@@ -38,7 +38,6 @@ export const useOfferUsage = (options: UseOfferUsageOptions = {}) => {
       setUsageStats(data.usage_stats);
       return data;
     } catch (error) {
-      console.error('Failed to fetch usage stats:', error);
       return null;
     } finally {
       setLoading(false);
@@ -56,7 +55,6 @@ export const useOfferUsage = (options: UseOfferUsageOptions = {}) => {
       setClaimAvailability(data);
       return data;
     } catch (error) {
-      console.error('Failed to fetch claim availability:', error);
       return null;
     } finally {
       setLoading(false);
@@ -88,7 +86,6 @@ export const useOfferUsage = (options: UseOfferUsageOptions = {}) => {
         claimAvailability: availabilityResult.status === 'fulfilled' ? availabilityResult.value : null
       };
     } catch (error) {
-      console.error('Failed to fetch offer usage info:', error);
       return null;
     } finally {
       setLoading(false);
@@ -103,7 +100,6 @@ export const useOfferUsage = (options: UseOfferUsageOptions = {}) => {
       setSavingsSummary(data);
       return data;
     } catch (error) {
-      console.error('Failed to fetch savings summary:', error);
       toast({
         title: "Error",
         description: "Could not load savings summary",

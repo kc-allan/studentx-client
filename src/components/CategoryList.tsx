@@ -33,7 +33,6 @@ const CategoryList: React.FC = () => {
       }
       setCategories(response.data.data);
     } catch (error) {
-      console.error(error);
       toast({
         title: error.response?.data?.message || error.message || "Error",
         description: error.response?.data?.message || "Couldn't load categories. Please try again later.",

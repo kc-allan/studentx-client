@@ -1,7 +1,277 @@
+@import 'tailwindcss';
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@plugin 'tailwindcss-animate';
+
+@plugin 'tailwindcss-animate';
+
+@custom-variant dark (&:is(.dark *));
+
+@custom-variant dark (&:is(.dark *));
+
+@utility container {
+  margin-inline: auto;
+  padding-inline: 2rem;
+  @media (width >= --theme(--breakpoint-sm)) {
+    max-width: none;
+  }
+  @media (width >= 1400px) {
+    max-width: 1400px;
+  }
+}
+
+@theme {
+  --color-foreground: #262628;
+
+  --color-brand-primary: #db0271;
+  --color-secondary: #0000ee;
+  --color-brand-secondary: #0000ee;
+  --color-brand-accent: #148cfc;
+  --color-brand-danger: #c72310;
+
+  --color-neutral-darkest: #000000;
+  --color-neutral-darker: #161616;
+  --color-neutral-dark: #262628;
+  --color-neutral-medium: #596168;
+  --color-neutral-light: #4c5359;
+  --color-neutral-lighter: #d8d8d8;
+  --color-neutral-lightest: #e2e2e2;
+
+  --color-background: #ffffff;
+  --color-background-light: #fefefe;
+  --color-background-lighter: #fafbfc;
+  --color-background-subtle: #f4f4f4;
+  --color-background-muted: #f0f4f8;
+  --color-background-soft: #e1e9f0;
+  --color-background-softer: #e0e9f0;
+
+  --color-text-primary: #262628;
+  --color-text-secondary: #596168;
+  --color-text-tertiary: #4c5359;
+  --color-text-inverted: #ffffff;
+  --color-text-link: #0000ee;
+  --color-text-hover: #148cfc;
+  --color-text-danger: #c72310;
+
+  --color-border: #e6e6e6;
+  --color-border-primary: #db0271;
+  --color-border-strong: #d8d8d8;
+  --color-border-subtle: #f0f4f8;
+  --color-border-accent: #148cfc;
+  --color-border-danger: #c72310;
+
+  --color-destructive: #c72310;
+  --color-destructive-foreground: #ffffff;
+
+  --color-success: #28a745;
+  --color-success-foreground: #ffffff;
+
+  --color-warning: #ffc107;
+  --color-warning-foreground: #262628;
+
+  --radius-lg: 0.5rem;
+  --radius-md: 0.375rem;
+  --radius-sm: 0.25rem;
+  --radius-full: 9999px;
+
+  --animate-accordion-down: accordion-down 0.2s ease-out;
+  --animate-accordion-up: accordion-up 0.2s ease-out;
+  --animate-pulse-light: pulse-light 2s ease-in-out infinite;
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-float-delay: float 6s ease-in-out 2s infinite;
+
+  @keyframes accordion-down {
+    from {
+      height: 0;
+    }
+    to {
+      height: var(--radix-accordion-content-height);
+    }
+  }
+  @keyframes accordion-up {
+    from {
+      height: var(--radix-accordion-content-height);
+    }
+    to {
+      height: 0;
+    }
+  }
+  @keyframes pulse-light {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.8;
+    }
+  }
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-20px);
+    }
+  }
+}
+
+@theme {
+  --color-foreground: #262628;
+
+  --color-brand-primary: #db0271;
+  --color-secondary: #0000ee;
+  --color-brand-secondary: #0000ee;
+  --color-brand-accent: #148cfc;
+  --color-brand-danger: #c72310;
+
+  --color-neutral-darkest: #000000;
+  --color-neutral-darker: #161616;
+  --color-neutral-dark: #262628;
+  --color-neutral-medium: #596168;
+  --color-neutral-light: #4c5359;
+  --color-neutral-lighter: #d8d8d8;
+  --color-neutral-lightest: #e2e2e2;
+
+  --color-background: #ffffff;
+  --color-background-light: #fefefe;
+  --color-background-lighter: #fafbfc;
+  --color-background-subtle: #f4f4f4;
+  --color-background-muted: #f0f4f8;
+  --color-background-soft: #e1e9f0;
+  --color-background-softer: #e0e9f0;
+
+  --color-text-primary: #262628;
+  --color-text-secondary: #596168;
+  --color-text-tertiary: #4c5359;
+  --color-text-inverted: #ffffff;
+  --color-text-link: #0000ee;
+  --color-text-hover: #148cfc;
+  --color-text-danger: #c72310;
+
+  --color-border: #e6e6e6;
+  --color-border-strong: #d8d8d8;
+  --color-border-subtle: #f0f4f8;
+  --color-border-accent: #148cfc;
+  --color-border-danger: #c72310;
+
+  --color-destructive: #c72310;
+  --color-destructive-foreground: #ffffff;
+
+  --color-success: #28a745;
+  --color-success-foreground: #ffffff;
+
+  --color-warning: #ffc107;
+  --color-warning-foreground: #262628;
+
+  --radius-lg: 0.5rem;
+  --radius-md: 0.375rem;
+  --radius-sm: 0.25rem;
+  --radius-full: 9999px;
+
+  --animate-accordion-down: accordion-down 0.2s ease-out;
+  --animate-accordion-up: accordion-up 0.2s ease-out;
+  --animate-pulse-light: pulse-light 2s ease-in-out infinite;
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-float-delay: float 6s ease-in-out 2s infinite;
+
+  @keyframes accordion-down {
+    from {
+      height: 0;
+    }
+    to {
+      height: var(--radix-accordion-content-height);
+    }
+  }
+  @keyframes accordion-up {
+    from {
+      height: var(--radix-accordion-content-height);
+    }
+    to {
+      height: 0;
+    }
+  }
+  @keyframes pulse-light {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.8;
+    }
+  }
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-20px);
+    }
+  }
+}
+
+/*
+  The default border color has changed to `currentcolor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentcolor);
+  }
+}
+
+@utility container {
+  margin-inline: auto;
+  padding-inline: 2rem;
+  @media (width >= --theme(--breakpoint-sm)) {
+    max-width: none;
+  }
+  @media (width >= 1400px) {
+    max-width: 1400px;
+  }
+}
+
+@utility discount-badge {
+  @apply bg-secondary rounded-full px-2 py-1 text-white font-bold text-xs uppercase tracking-wider;
+}
+
+@utility btn-primary {
+  @apply bg-brand-primary hover:bg-brand-primary/70 text-white font-medium py-2 px-4 rounded-md transition-all;
+}
+
+@utility btn-secondary {
+  @apply bg-secondary hover:bg-secondary/80 text-white font-medium py-2 px-4 rounded-md transition-all;
+}
+
+@utility btn-outline {
+  @apply border border-border-primary text-text-primary hover:bg-brand-primary/80 font-medium py-2 px-4 rounded-md transition-all;
+}
+
+/*
+  The default border color has changed to `currentcolor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentcolor);
+  }
+}
 
 @layer base {
   :root {
@@ -121,24 +391,6 @@
   
   h6 {
     @apply text-base md:text-lg;
-  }
-}
-
-@layer components {
-  .discount-badge {
-    @apply bg-secondary rounded-full px-2 py-1 text-white font-bold text-xs uppercase tracking-wider;
-  }
-  
-  .btn-primary {
-    @apply bg-brand-primary hover:bg-brand-primary/70 text-white font-medium py-2 px-4 rounded-md transition-all;
-  }
-  
-  .btn-secondary {
-    @apply bg-secondary hover:bg-secondary-600 text-white font-medium py-2 px-4 rounded-md transition-all;
-  }
-  
-  .btn-outline {
-    @apply border border-primary text-primary hover:bg-primary-100 font-medium py-2 px-4 rounded-md transition-all;
   }
 }
 

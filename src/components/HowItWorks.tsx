@@ -50,7 +50,7 @@ const HowItWorks = () => {
     <div className="relative overflow-hidden">
       {/* Shared background canvas */}
       <motion.div
-        className="absolute inset-0 bg-gradient-to-br from-gray-50 via-white to-gray-100"
+        className="absolute inset-0 bg-linear-to-br from-gray-50 via-white to-gray-100"
         style={{
           y: yBg,
           opacity: opacityBg
@@ -75,7 +75,7 @@ const HowItWorks = () => {
             >
               How StudentX Works
               <motion.span
-                className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-brand-primary to-brand-secondary"
+                className="absolute bottom-0 left-0 w-full h-1 bg-linear-to-r from-brand-primary to-brand-secondary"
                 initial={{ scaleX: 0 }}
                 animate={{ scaleX: 1 }}
                 transition={{ duration: 1, delay: 0.3 }}

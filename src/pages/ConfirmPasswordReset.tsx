@@ -63,7 +63,6 @@ const ConfirmPasswordReset = () => {
 				variant: 'success',
 			});
 		} catch (error) {
-			console.error('Error verifying token:', error);
 			setError(error.response?.data.message || 'Invalid or expired token');
 			return false;
 		} finally {
@@ -72,7 +71,7 @@ const ConfirmPasswordReset = () => {
 	};
 
 	return (
-		<div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
+		<div className="min-h-screen flex items-center justify-center bg-linear-to-br from-blue-50 to-indigo-100 p-4">
 			<Card className="w-full max-w-md bg-white shadow-lg rounded-lg">
 				<CardHeader className="text-center">
 					<div className="mx-auto w-12 h-12 bg-black rounded-lg flex items-center justify-center mb-4">

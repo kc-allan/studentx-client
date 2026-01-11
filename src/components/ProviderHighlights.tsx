@@ -168,7 +168,7 @@ const ProviderHighlights = () => {
         }}
         className="py-20 w-full relative overflow-hidden">
         {/* Gradient Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-50/90 to-slate-50/95"></div>
+        <div className="absolute inset-0 bg-linear-to-br from-blue-50/90 to-slate-50/95"></div>
         <div className="relative max-w-4xl mx-auto px-4 text-center z-10">
           <div className="inline-flex items-center px-4 py-2 rounded-full bg-brand-primary/10 text-brand-primary text-sm font-medium mb-4">
             <Sparkles className="h-5 w-5 mr-2" />

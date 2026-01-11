@@ -55,7 +55,7 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({ user }) => {
   };
 
   return (
-    <div className="relative bg-gradient-to-br flex justify-center from-neutral-900 via-neutral-950 to-black text-white">
+    <div className="relative bg-linear-to-br flex justify-center from-neutral-900 via-neutral-950 to-black text-white">
       <Header />
       <div className="absolute inset-0 overflow-hidden opacity-15">
         <div className="absolute top-0 left-0 w-full h-full bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXR0ZXJuIGlkPSJwYXR0ZXJuIiB4PSIwIiB5PSIwIiB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHBhdHRlcm5Vbml0cz0idXNlclNwYWNlT25Vc2UiIHBhdHRlcm5UcmFuc2Zvcm09InJvdGF0ZSgzMCkiPjxwYXRoIGQ9Ik0tMTAgLTEwIEwyMCAtMTAgTDIwIDIwIEwtMTAgMjAgWiIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjAuNSIgZmlsbD0ibm9uZSIvPjwvcGF0dGVybj48cmVjdCB4PSIwIiB5PSIwIiB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI3BhdHRlcm4pIi8+PC9zdmc+')] animate-very-slow-pan"></div>
@@ -71,13 +71,13 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({ user }) => {
                 {user.firstName[0]}{user.lastName[0]}
               </AvatarFallback>
             </Avatar>
-            <Button
+            {/* <Button
               size="icon"
               variant="secondary"
               className="absolute -bottom-2 -right-2 w-8 h-8 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/20"
             >
               <Camera className="h-4 w-4" />
-            </Button>
+            </Button> */}
           </div>
 
           {/* User Info */}
