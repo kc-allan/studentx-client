@@ -1,11 +1,11 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Clock, Star, Repeat, Infinity, Trophy, Users, GraduationCap } from 'lucide-react';
+import { Clock, Star, Repeat, Infinity, Trophy, Users, GraduationCap, Video } from 'lucide-react';
 import Countdown from './Countdown';
 import { useNavigate } from 'react-router-dom';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { Badge } from '@/components/ui/badge';
-import { UsageType } from '@/types/offer';
+import { UsageType, OfferKind } from '@/types/offer';
 
 const DICOUNT_TYPES = {
 	percentage: 'percentage',
@@ -70,6 +70,7 @@ const OfferCard = ({ offer }) => {
 			.find(x => x.type === "currency")
 			.value;
 
+	const isEvent = offer.offerKind === OfferKind.EVENT;
 	const usageTypeInfo = getUsageTypeInfo(offer.usage_type || UsageType.SINGLE_USE);
 	const userUsageStatus = getUserUsageStatus();
 	const UsageIcon = usageTypeInfo.icon;
@@ -84,8 +85,13 @@ const OfferCard = ({ offer }) => {
 						className="w-full h-48 object-cover group-hover:scale-105 transition-transform"
 					/>
 				</div>
-				<div className="absolute top-3 left-3 bg-brand-primary text-white text-xs font-bold px-3 py-1 rounded-full">
-					{offer.discountType === DICOUNT_TYPES.percentage
+				<div className={`absolute top-3 left-3 ${isEvent ? 'bg-indigo-600' : 'bg-brand-primary'} text-white text-xs font-bold px-3 py-1 rounded-full flex items-center`}>
+					{isEvent ? (
+						<>
+							<Video className="h-3 w-3 mr-1" />
+							EVENT
+						</>
+					) : offer.discountType === DICOUNT_TYPES.percentage
 						? `${offer.discountValue}% OFF`
 						: offer.discountType === DICOUNT_TYPES.fixed ? `${formatCurrency(offer.discountValue, offer.currency)} OFF`
 							: offer.discountType === DICOUNT_TYPES.bogo ? 'Buy 1 Get 1 Free'
@@ -111,7 +117,7 @@ const OfferCard = ({ offer }) => {
 						<h3 className="font-bold text-lg text-gray-900">{offer.merchant.name}</h3>
 						<div className="flex items-center text-xs text-gray-500">
 							<Star className="h-3 w-3 fill-yellow-400 text-yellow-400 mr-1" />
-							<span>4.8 • {offer.couponLimit} coupons</span>
+							<span>4.8 • {offer.couponLimit} {isEvent ? 'spots' : 'coupons'}</span>
 						</div>
 					</div>
 				</div>
@@ -129,9 +135,18 @@ const OfferCard = ({ offer }) => {
 					)}
 
 					{/* Usage type badge */}
-					<Badge className={`text-xs font-medium ${usageTypeInfo.color} border-0`}>
-						<UsageIcon className="h-3 w-3 mr-1" />
-						{usageTypeInfo.label}
+					<Badge className={`text-xs font-medium ${isEvent ? 'bg-indigo-100 text-indigo-700' : usageTypeInfo.color} border-0`}>
+						{isEvent ? (
+							<>
+								<Video className="h-3 w-3 mr-1" />
+								Register once
+							</>
+						) : (
+							<>
+								<UsageIcon className="h-3 w-3 mr-1" />
+								{usageTypeInfo.label}
+							</>
+						)}
 					</Badge>
 
 					{/* User usage status badge */}
@@ -158,7 +173,7 @@ const OfferCard = ({ offer }) => {
 
 				{/* Category tag */}
 				<div className="inline-flex text-nowrap items-center px-3 py-1 bg-gray-100 text-gray-700 text-xs font-medium rounded-full">
-					{offer.category?.name} <span className={`${!offer.category?.name ? 'hidden' : ''} mx-2`}>•</span> {offer.redemptionType === 'online' ? 'Online' : offer.redemptionType === 'in-store' ? 'In-store' : 'In-Store/Online'}
+					{offer.category?.name} <span className={`${!offer.category?.name ? 'hidden' : ''} mx-2`}>•</span> {isEvent ? 'Event access' : offer.redemptionType === 'online' ? 'Online' : offer.redemptionType === 'in-store' ? 'In-store' : 'In-Store/Online'}
 				</div>
 			</div>
 		</div>

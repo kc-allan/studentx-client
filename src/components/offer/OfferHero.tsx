@@ -2,7 +2,7 @@ import React from "react";
 import { MapPin, Globe, Share2, Bookmark, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge"; // Assuming this exists from prev file analysis
-import { OfferDetails, DiscountType } from "@/types/offerHooks";
+import { OfferDetails, DiscountType, OfferKind } from "@/types/offerHooks";
 import { motion } from "framer-motion";
 
 interface OfferHeroProps {
@@ -15,6 +15,7 @@ interface OfferHeroProps {
 const OfferHero: React.FC<OfferHeroProps> = ({ offer, onSave, onShare, isSaved }) => {
 
     const discountLabel = React.useMemo(() => {
+        if (offer.offerKind === OfferKind.EVENT) return "EVENT";
         switch (offer.discountType) {
             case DiscountType.PERCENTAGE: return `${offer.discountValue}% OFF`;
             case DiscountType.FIXED_AMOUNT: return `$${offer.discountValue} OFF`;

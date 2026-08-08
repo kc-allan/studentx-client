@@ -29,9 +29,11 @@ import ServerError from "./ServerError";
 
 type HeaderProps = {
   sx?: string;
+  /** Drops the header below the announcement strip while it is on screen. */
+  offsetTop?: boolean;
 };
 
-const Header: React.FC<HeaderProps> = ({ sx }) => {
+const Header: React.FC<HeaderProps> = ({ sx, offsetTop }) => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const currentUser = useSelector((state: RootState) => state.auth.user);
@@ -103,7 +105,7 @@ const Header: React.FC<HeaderProps> = ({ sx }) => {
   }, []);
 
   return (
-    <header className={`${sx} fixed top-0 z-50 transition-all duration-300 ${isScrolled ? 'bg-slate-100 shadow-sm w-full' : 'bg-slate-100/90 w-[96%] mt-4 rounded-xl backdrop-blur-sm'}`}>
+    <header className={`${sx} fixed ${offsetTop ? 'top-9' : 'top-0'} z-50 transition-all duration-300 ${isScrolled ? 'bg-slate-100 shadow-sm w-full' : 'bg-slate-100/90 w-[96%] mt-4 rounded-xl backdrop-blur-sm'}`}>
       <div className="container px-4 mx-auto">
         <div className="flex items-center justify-between h-16">
           {/* Logo with better visual hierarchy */}

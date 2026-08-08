@@ -2,7 +2,7 @@ import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Loader2, ArrowRight, Clock, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { OfferDetails, AvailableClaims, CouponClaimSuccessData } from "@/types/offerHooks";
+import { OfferDetails, AvailableClaims, CouponClaimSuccessData, OfferKind } from "@/types/offerHooks";
 import { CouponPreview } from "./CouponPreview";
 
 interface ClaimCardProps {
@@ -24,6 +24,7 @@ const ClaimCard: React.FC<ClaimCardProps> = ({
 }) => {
     const isClaimed = !!claimedCoupon;
     const canClaim = availability?.can_claim_now ?? true; // Default to true if loading
+    const isEvent = offer.offerKind === OfferKind.EVENT;
 
     return (
         <div className="relative">
@@ -39,8 +40,14 @@ const ClaimCard: React.FC<ClaimCardProps> = ({
                             className="space-y-6"
                         >
                             <div className="text-center space-y-2">
-                                <h3 className="text-2xl font-bold text-text-primary">Ready to save?</h3>
-                                <p className="text-text-secondary">Claim this deal now to get your unique code.</p>
+                                <h3 className="text-2xl font-bold text-text-primary">
+                                    {isEvent ? "Ready to join?" : "Ready to save?"}
+                                </h3>
+                                <p className="text-text-secondary">
+                                    {isEvent
+                                        ? "Register now to get the event link and QR code."
+                                        : "Claim this deal now to get your unique code."}
+                                </p>
                             </div>
 
                             {/* Status / Availability Info */}
@@ -77,7 +84,8 @@ const ClaimCard: React.FC<ClaimCardProps> = ({
                                     <Loader2 className="animate-spin mr-2" />
                                 ) : (
                                     <>
-                                        Claim Offer <ArrowRight className="ml-2 group-hover:translate-x-1" size={20} />
+                                        {isEvent ? "Register Now" : "Claim Offer"}
+                                        <ArrowRight className="ml-2 group-hover:translate-x-1" size={20} />
                                     </>
                                 )}
                             </Button>
@@ -87,7 +95,10 @@ const ClaimCard: React.FC<ClaimCardProps> = ({
                                     <span className="w-2 h-2 rounded-full bg-success" /> Verified
                                 </span>
                                 <span>•</span>
-                                <span>{offer.coupons.total - offer.coupons.claimed} codes left</span>
+                                <span>
+                                    {offer.coupons.total - offer.coupons.claimed}
+                                    {isEvent ? " spots left" : " codes left"}
+                                </span>
                             </div>
                         </motion.div>
                     ) : (

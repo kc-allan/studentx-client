@@ -26,7 +26,8 @@ import {
   Repeat,
   Trophy,
   Users,
-  Infinity
+  Infinity,
+  Video
 } from "lucide-react";
 import { Link } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
@@ -44,7 +45,10 @@ interface CouponTrackerProps {
 
 interface Coupon {
   id: string;
-  code: string;
+  /** Null for event registrations, which reveal a shared link instead of a code. */
+  code: string | null;
+  offerKind?: 'discount' | 'event';
+  eventUrl?: string;
   title: string;
   brand: string;
   brandLogo: string;
@@ -158,12 +162,16 @@ export const CouponTracker: React.FC<CouponTrackerProps> = ({ user }) => {
     });
   };
 
-  const copyToClipboard = (code: string) => {
-    navigator.clipboard.writeText(code);
+  const isEventCoupon = (coupon: Coupon) => coupon.offerKind === 'event';
+
+  const copyToClipboard = (value: string, isLink = false) => {
+    navigator.clipboard.writeText(value);
     setIsCopied(true);
     toast({
-      title: "Code Copied!",
-      description: "The coupon code has been copied to your clipboard",
+      title: isLink ? "Link Copied!" : "Code Copied!",
+      description: isLink
+        ? "The event link has been copied to your clipboard"
+        : "The coupon code has been copied to your clipboard",
     });
     setTimeout(() => setIsCopied(false), 3000);
     // You could add a toast notification here
@@ -204,15 +212,23 @@ export const CouponTracker: React.FC<CouponTrackerProps> = ({ user }) => {
                 </DialogTrigger>
                 <DialogContent className="max-w-lg">
                   <DialogHeader>
-                    <DialogTitle>How to Claim</DialogTitle>
+                    <DialogTitle>{isEventCoupon(coupon) ? 'How to Join' : 'How to Claim'}</DialogTitle>
                     <DialogDescription>
-                      Here are the steps to use this coupon:
+                      {isEventCoupon(coupon)
+                        ? 'Here is how to attend this event:'
+                        : 'Here are the steps to use this coupon:'}
                     </DialogDescription>
                   </DialogHeader>
                   <Card className="border-neutral-lighter mb-4">
                     <CardContent className="p-4">
                       <ul className="list-disc pl-5 space-y-2 text-sm text-neutral-medium">
-                        {coupon.redemptionType === 'online' ? (
+                        {isEventCoupon(coupon) ? (
+                          <>
+                            <li>Open the event link below when the event starts.</li>
+                            <li>Or scan your QR code at the door to check in.</li>
+                            <li>Enjoy the event!</li>
+                          </>
+                        ) : coupon.redemptionType === 'online' ? (
                           <>
                             <li>Visit the <strong>{coupon.brand}</strong> website or app.</li>
                             <li>Enter the code <span className="font-mono font-bold">{coupon.code}</span> at checkout.</li>
@@ -245,21 +261,45 @@ export const CouponTracker: React.FC<CouponTrackerProps> = ({ user }) => {
 
         {/* Coupon Code + Discount */}
         <div className="flex flex-wrap items-center gap-2 mb-3">
-          <div className="bg-brand-primary/10 border-2 border-dashed border-brand-primary/30 rounded-lg px-3 py-1.5 flex items-center gap-2">
-            <span className="font-mono font-bold text-brand-primary text-sm">{coupon.code}</span>
-            <Button
-              size="icon"
-              variant="ghost"
-              className="h-6 w-6 hover:bg-brand-primary/20 outline-none focus:outline-none"
-              onClick={() => copyToClipboard(coupon.code)}
-            >
-              {copied ? <CheckCircle className="h-3 w-3 text-success" /> : <Copy className="h-3 w-3" />}
-            </Button>
-          </div>
-          <div className="flex items-center gap-1 text-brand-primary font-semibold text-sm">
-            {getDiscountIcon(coupon.discountType)}
-            <span>{coupon.discount}</span>
-          </div>
+          {isEventCoupon(coupon) ? (
+            <>
+              <a
+                href={coupon.eventUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-brand-primary/10 border-2 border-dashed border-brand-primary/30 rounded-lg px-3 py-1.5 flex items-center gap-2 max-w-full hover:border-brand-primary transition-colors"
+              >
+                <Video className="h-3 w-3 text-brand-primary shrink-0" />
+                <span className="text-brand-primary text-sm truncate">{coupon.eventUrl}</span>
+              </a>
+              <Button
+                size="icon"
+                variant="ghost"
+                className="h-6 w-6 hover:bg-brand-primary/20 outline-none focus:outline-none"
+                onClick={() => copyToClipboard(coupon.eventUrl || '', true)}
+              >
+                {copied ? <CheckCircle className="h-3 w-3 text-success" /> : <Copy className="h-3 w-3" />}
+              </Button>
+            </>
+          ) : (
+            <>
+              <div className="bg-brand-primary/10 border-2 border-dashed border-brand-primary/30 rounded-lg px-3 py-1.5 flex items-center gap-2">
+                <span className="font-mono font-bold text-brand-primary text-sm">{coupon.code}</span>
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  className="h-6 w-6 hover:bg-brand-primary/20 outline-none focus:outline-none"
+                  onClick={() => copyToClipboard(coupon.code || '')}
+                >
+                  {copied ? <CheckCircle className="h-3 w-3 text-success" /> : <Copy className="h-3 w-3" />}
+                </Button>
+              </div>
+              <div className="flex items-center gap-1 text-brand-primary font-semibold text-sm">
+                {getDiscountIcon(coupon.discountType)}
+                <span>{coupon.discount}</span>
+              </div>
+            </>
+          )}
         </div>
 
         {/* Usage Type and Stats */}

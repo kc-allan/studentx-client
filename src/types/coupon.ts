@@ -1,4 +1,4 @@
-import { Offer, DiscountInfo, UsageStats } from "./offer";
+import { Offer, DiscountInfo, UsageStats, OfferKind } from "./offer";
 import { Consumer } from "./user";
 
 export enum CouponStatus {
@@ -10,8 +10,11 @@ export enum CouponStatus {
 
 export interface Coupon {
 	id: string;
-	code: string;
+	/** Null for event registrations, which reveal a shared link instead of a code. */
+	code: string | null;
 	qrCode: string;
+	offerKind?: OfferKind;
+	eventUrl?: string;
 	expiryDate: string;
 	status: CouponStatus;
 	redeemed: boolean;
@@ -33,10 +36,12 @@ export interface CouponClaimResponse {
 	message: string;
 	description: string;
 	data: {
-		code: string;
+		code: string | null;
 		qrCode: string;
 		expiryDate: string;
 		status: string;
+		offerKind?: OfferKind;
+		eventUrl?: string;
 		discount: DiscountInfo;
 		usage_stats: {
 			total_claims: number;

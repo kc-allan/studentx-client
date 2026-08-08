@@ -22,6 +22,11 @@ export enum DiscountType {
   FREE_ITEM = "free_item",
 }
 
+export enum OfferKind {
+  DISCOUNT = "discount",
+  EVENT = "event",
+}
+
 export enum OfferUsageType {
   SINGLE_USE = "single_use",
   MULTI_USE = "multi_use",
@@ -34,6 +39,7 @@ export interface OfferDetails {
   title: string;
   description: string;
   coverImage: string;
+  offerKind?: OfferKind;
   discountType: DiscountType;
   discountValue: number;
   currency: string;
@@ -50,10 +56,14 @@ export interface OfferDetails {
 }
 
 export interface CouponClaimSuccessData {
-  code: string;
+  /** Null for event registrations, which reveal a shared link instead of a code. */
+  code: string | null;
   qrCode: string;
   expiryDate: string;
   status: string;
+  offerKind?: OfferKind;
+  /** The link every student who registered for this event receives. */
+  eventUrl?: string;
   usage_stats: {
     total_claims: number;
     total_savings: number;
@@ -65,6 +75,8 @@ export interface CouponClaimSuccessData {
 export interface AvailableClaims {
   can_claim_now: boolean;
   reason: string | null;
+  /** The code or event link the user already holds for this offer, if any. */
+  existing_claim?: CouponClaimSuccessData | null;
   remaining_claims: number | string;
   current_usage_count: number;
   next_available_claim: string | null;
@@ -80,6 +92,7 @@ export interface RecommendedOffer {
   title: string;
   description: string;
   coverImage: string;
+  offerKind?: OfferKind;
   discountType: DiscountType;
   discountValue: number;
   currency: string;

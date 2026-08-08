@@ -1,5 +1,6 @@
 import * as React from "react";
 import Header from "@/components/Header";
+import AnnouncementStrip from "@/components/AnnouncementStrip";
 import Hero from "@/components/Hero";
 import CategoryList from "@/components/CategoryList";
 import FeaturedCoupons from "@/components/FeaturedCoupons";
@@ -13,9 +14,12 @@ import Footer from "@/components/Footer";
 
 
 const Index = () => {
+  const [stripVisible, setStripVisible] = React.useState(false);
+
   return (
     <div className="min-h-screen flex flex-col items-center w-full bg-gray-50">
-      <Header />
+      <AnnouncementStrip onVisibilityChange={setStripVisible} />
+      <Header offsetTop={stripVisible} />
       <main className="flex-grow flex flex-col items-center justify-center w-full">
         <Hero />
         <HowItWorks />

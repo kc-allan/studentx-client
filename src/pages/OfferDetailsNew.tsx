@@ -8,7 +8,7 @@ import ClaimCard from "@/components/offer/ClaimCard";
 import RecommendedOffers from "@/components/offer/RecommendedOffers";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { OfferDetails, AvailableClaims, CouponClaimSuccessData, RecommendedOffer } from "@/types/offerHooks";
+import { OfferDetails, AvailableClaims, CouponClaimSuccessData, RecommendedOffer, OfferKind } from "@/types/offerHooks";
 import { Loader2 } from "lucide-react";
 
 // Mock data fallback if API fails (for development/demo purposes)
@@ -60,14 +60,21 @@ const OfferDetailsNew: React.FC = () => {
                 // Parallel fetch for offer details and availability/recs
 
                 // 1. Get Offer Details
-                const offerRes = await axiosInstance.get(`/offer/${id} `);
+                const offerRes = await axiosInstance.get(`/offer/${id}`);
                 const offerData = offerRes.data.data || offerRes.data;
                 setOffer(offerData);
 
                 // 2. Get Availability
                 try {
-                    const availRes = await axiosInstance.get(`/ offer / ${id}/available-claims`);
-                    setAvailability(availRes.data.data || availRes.data);
+                    const availRes = await axiosInstance.get(`/offer/${id}/available-claims`);
+                    const availData: AvailableClaims = availRes.data.data || availRes.data;
+                    setAvailability(availData);
+
+                    // Everyone registered for an event gets the same link, so show it
+                    // straight away rather than blocking on "already registered"
+                    if (offerData?.offerKind === OfferKind.EVENT && availData?.existing_claim) {
+                        setClaimedCoupon(availData.existing_claim);
+                    }
                 } catch (e) {
                     console.warn("Failed to fetch availability", e);
                 }
@@ -95,6 +102,8 @@ const OfferDetailsNew: React.FC = () => {
         fetchData();
     }, [id]);
 
+    const isEvent = offer?.offerKind === OfferKind.EVENT;
+
     const handleClaim = async () => {
         if (!offer) return;
         setClaiming(true);
@@ -112,16 +121,17 @@ const OfferDetailsNew: React.FC = () => {
             } catch (ignore) { }
 
             toast({
-                title: "Coupon Claimed!",
-                description: "Your code is ready to use.",
+                title: isEvent ? "You're registered!" : "Coupon Claimed!",
+                description: isEvent ? "Your event link is ready." : "Your code is ready to use.",
                 variant: "default" // or success if available
             });
 
         } catch (error: any) {
-            const msg = error.response?.data?.message || "Failed to claim coupon";
+            const msg = error.response?.data?.message
+                || (isEvent ? "Failed to register for event" : "Failed to claim coupon");
             setClaimError(msg);
             toast({
-                title: "Claim Failed",
+                title: isEvent ? "Registration Failed" : "Claim Failed",
                 description: msg,
                 variant: "destructive"
             });
