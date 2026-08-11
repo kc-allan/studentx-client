@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { ArrowRight, type LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-type CtaTone = "brand" | "ink" | "outline" | "outlineInverted";
+type CtaTone = "brand" | "ink" | "contrast" | "outline" | "outlineInverted";
 
 const TONES: Record<CtaTone, { shell: string; divider: string }> = {
   brand: {
@@ -13,6 +13,11 @@ const TONES: Record<CtaTone, { shell: string; divider: string }> = {
   ink: {
     shell: "bg-neutral-900 text-white hover:bg-neutral-700",
     divider: "border-white/25",
+  },
+  // For sitting on a brand-coloured surface, where a brand button would vanish
+  contrast: {
+    shell: "bg-white text-neutral-900 hover:bg-neutral-100",
+    divider: "border-neutral-900/15",
   },
   outline: {
     shell: "border border-neutral-300 text-neutral-900 hover:border-neutral-900",

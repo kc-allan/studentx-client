@@ -9,7 +9,6 @@ import HowItWorks from "@/components/HowItWorks";
 import LatestOffers from "@/components/LatestCoupons";
 import ProviderHighlights from "@/components/ProviderHighlights";
 import TestimonialsSection from "@/components/TestimonialsSection";
-import SignUpBanner from "@/components/SignUpBanner";
 import Footer from "@/components/Footer";
 
 const Index = () => {
@@ -29,8 +28,8 @@ const Index = () => {
         <HowItWorks />
         <ProviderHighlights />
         <TestimonialsSection />
-        <SignUpBanner />
       </main>
+      {/* Footer carries the closing sign-up CTA, so every page ends on it */}
       <Footer />
     </div>
   );

@@ -8,11 +8,12 @@ import { RootState } from "@/state";
 const Footer: React.FC = () => {
   const isAuthenticated = useSelector((state: RootState) => !!state.auth.user)
   return (
-    <footer className={`bg-gray-900 w-full ${!isAuthenticated && 'mt-48'} relative text-white`}>
+    // flex-col stops the banner's negative margin collapsing into the footer itself
+    <footer className="flex w-full flex-col bg-neutral-950 text-white">
       {!isAuthenticated && (
         <SignUpBanner />
       )}
-      <div className={`container ${!isAuthenticated && 'pt-48'}  px-4 py-12`}>
+      <div className={`container px-4 pb-12 ${isAuthenticated ? "pt-12" : "pt-16"}`}>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           <div>
             <h3 className="text-xl font-bold mb-4">Student<span className="text-brand-primary">X</span> </h3>
