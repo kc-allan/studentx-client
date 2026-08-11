@@ -1,7 +1,8 @@
 import React from "react";
-import { MapPin, Globe, Share2, Bookmark, CheckCircle2 } from "lucide-react";
+import { MapPin, Globe, Share2, Bookmark, CheckCircle2, Expand } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge"; // Assuming this exists from prev file analysis
+import { ImageLightbox } from "@/components/ui/image-preview";
 import { OfferDetails, DiscountType, OfferKind } from "@/types/offerHooks";
 import { motion } from "framer-motion";
 
@@ -13,6 +14,7 @@ interface OfferHeroProps {
 }
 
 const OfferHero: React.FC<OfferHeroProps> = ({ offer, onSave, onShare, isSaved }) => {
+    const [previewOpen, setPreviewOpen] = React.useState(false);
 
     const discountLabel = React.useMemo(() => {
         if (offer.offerKind === OfferKind.EVENT) return "EVENT";
@@ -69,10 +71,22 @@ const OfferHero: React.FC<OfferHeroProps> = ({ offer, onSave, onShare, isSaved }
 
             {/* Hero Content */}
             <div className="relative group rounded-xl overflow-hidden aspect-video shadow-sm">
-                <img src={offer.coverImage} alt={offer.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                <img src={offer.coverImage} alt={offer.title} className="w-full h-full object-cover" />
                 <div className="absolute inset-0 bg-neutral-darkest/40" />
 
-                <div className="absolute bottom-0 left-0 p-6 sm:p-8 w-full">
+                {/* The banner is cropped to fit, so keep the untouched image one click away */}
+                <button
+                    type="button"
+                    aria-label={`View full image: ${offer.title}`}
+                    onClick={() => setPreviewOpen(true)}
+                    className="absolute inset-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-white"
+                >
+                    <span className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-neutral-950/60 text-white opacity-0 backdrop-blur-sm transition-opacity group-hover:opacity-100 group-focus-within:opacity-100 max-md:opacity-100">
+                        <Expand className="h-4 w-4" />
+                    </span>
+                </button>
+
+                <div className="pointer-events-none absolute bottom-0 left-0 p-6 sm:p-8 w-full">
                     <Badge className="mb-4 bg-background/90 text-text-primary border-none text-lg py-1 px-4 font-bold tracking-wide">
                         {discountLabel}
                     </Badge>
@@ -81,6 +95,14 @@ const OfferHero: React.FC<OfferHeroProps> = ({ offer, onSave, onShare, isSaved }
                     </h1>
                 </div>
             </div>
+
+            <ImageLightbox
+                src={offer.coverImage}
+                alt={offer.title}
+                caption={offer.title}
+                open={previewOpen}
+                onOpenChange={setPreviewOpen}
+            />
             {/* Description & Terms */}
             <div className="prose prose-slate max-w-none text-text-secondary leading-relaxed">
                 <p className="text-lg">{offer.description}</p>

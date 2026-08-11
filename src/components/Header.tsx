@@ -110,7 +110,7 @@ const Header: React.FC<HeaderProps> = ({ sx, offsetTop }) => {
         <div className="flex items-center justify-between h-16">
           {/* Logo with better visual hierarchy */}
           <Link to="/" className="flex items-center space-x-2 min-w-max">
-            <Zap className="h-6 w-6 text-brand-primary animate-pulse" />
+            <Zap className="h-6 w-6 text-brand-primary" />
             <h1 className="text-xl font-bold text-gray-900">
               Student<span className="text-brand-primary">X</span>
             </h1>

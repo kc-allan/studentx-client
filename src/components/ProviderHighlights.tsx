@@ -1,272 +1,134 @@
 import * as React from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { BadgeCheck, ExternalLink, Sparkles, Star } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { ArrowUpRight } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import axiosInstance from "@/api/axios";
-import { useNavigate } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { Cta } from "@/components/ui/cta";
+import SectionHeading from "./SectionHeading";
+
+interface FeaturedMerchant {
+  id: string;
+  name: string;
+  logo: string;
+  rating?: number;
+  isApproved?: boolean;
+}
+
+const PARTNERSHIP_MAILTO =
+  "mailto:info@studentx.co.ke?subject=Partnership%20Inquiry&body=I%20am%20interested%20in%20partnering%20with%20StudentX%20to%20offer%20exclusive%20discounts%20to%20students.%20Please%20provide%20more%20information.";
 
 const ProviderHighlights = () => {
   const navigate = useNavigate();
-  const [featureMerchants, setFeatureMerchants] = React.useState<boolean>(false);
-  const [merchants, setMerchants] = React.useState([
-    {
-      id: "1",
-      name: "KFC",
-      logo: "https://cdn.simpleicons.org/kfc",
-      rating: 0,
-      isApproved: false,
-      categories: [],
-      role: "",
-      first_name: "",
-      last_name: "",
-      email: "",
-      phone: "",
-      address: "",
-      created_at: "",
-      updated_at: ""
-    },
-    {
-      id: "2",
-      name: "Spotify",
-      logo: "https://cdn.simpleicons.org/spotify",
-      rating: 0,
-      isApproved: false,
-      categories: [],
-      role: "",
-      first_name: "",
-      last_name: "",
-      email: "",
-      phone: "",
-      address: "",
-      created_at: "",
-      updated_at: ""
-    },
-    {
-      id: "3",
-      name: "Nike",
-      logo: "https://cdn.simpleicons.org/nike",
-      rating: 0,
-      isApproved: false,
-      categories: [],
-      role: "",
-      first_name: "",
-      last_name: "",
-      email: "",
-      phone: "",
-      address: "",
-      created_at: "",
-      updated_at: ""
-    },
-    {
-      id: "4",
-      name: "FIFA",
-      logo: "https://cdn.simpleicons.org/fifa",
-      rating: 0,
-      isApproved: false,
-      categories: [],
-      role: "",
-      first_name: "",
-      last_name: "",
-      email: "",
-      phone: "",
-      address: "",
-      created_at: "",
-      updated_at: ""
-    },
-    {
-      id: "5",
-      name: "Uber",
-      logo: "https://cdn.simpleicons.org/uber",
-      rating: 0,
-      isApproved: false,
-      categories: [],
-      role: "",
-      first_name: "",
-      last_name: "",
-      email: "",
-      phone: "",
-      address: "",
-      created_at: "",
-      updated_at: ""
-    },
-    {
-      id: "6",
-      name: "2K",
-      logo: "https://cdn.simpleicons.org/2k",
-      rating: 0,
-      isApproved: false,
-      categories: [],
-      role: "",
-      first_name: "",
-      last_name: "",
-      email: "",
-      phone: "",
-      address: "",
-      created_at: "",
-      updated_at: ""
-    },
-    {
-      id: "7",
-      name: "Rockstar Games",
-      logo: "https://cdn.simpleicons.org/rockstargames",
-      rating: 0,
-      isApproved: false,
-      categories: [],
-      role: "",
-      first_name: "",
-      last_name: "",
-      email: "",
-      phone: "",
-      address: "",
-      created_at: "",
-      updated_at: ""
-    },
-    {
-      id: "8",
-      name: "Airbnb",
-      logo: "https://cdn.simpleicons.org/airbnb",
-      rating: 0,
-      isApproved: false,
-      categories: [],
-      role: "",
-      first_name: "",
-      last_name: "",
-      email: "",
-      phone: "",
-      address: "",
-      created_at: "",
-      updated_at: ""
-    }
-  ]);
+  const [merchants, setMerchants] = React.useState<FeaturedMerchant[]>([]);
 
+  React.useEffect(() => {
+    let active = true;
 
-  const fetchFeaturedMerchants = async () => {
-    try {
-      const response = await axiosInstance.get('/merchants/featured');
-      if (response.status !== 200) {
-        throw new Error(response.data.message || 'An error occurred while fetching featured merchants');
+    const fetchFeaturedMerchants = async () => {
+      try {
+        const response = await axiosInstance.get('/merchants/featured');
+        if (response.status !== 200) {
+          throw new Error(response.data.message || 'An error occurred while fetching featured merchants');
+        }
+        if (active) setMerchants(response.data?.data || []);
+      } catch (error) {
+        const status = error.response?.status;
+        // A missing partner wall is not worth interrupting the page for
+        if (status && status >= 500) {
+          toast({
+            title: error.response?.data?.message || error.message || "An error occurred",
+            description: "Something went wrong while getting featured partners.",
+            variant: "destructive",
+          });
+        }
       }
-      const { data } = response.data;
-      setMerchants(data);
-    } catch (error) {
+    };
 
-      toast({
-        title: error.response.data?.message || error.message || "An error occurred",
-        description: error.response.data?.message || "Something went wrong while getting featured merchants. It's not you it's us",
-        variant: `${error.response.status.toLocaleString().startsWith(4) ? "warning" : "destructive"}`
-      });
-    }
-  }
-  if (!featureMerchants) {
-    return (
-      <section
-        style={{
-          backgroundImage: `url("/trusted-partner.webp")`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-        }}
-        className="py-20 w-full relative overflow-hidden">
-        {/* Gradient Overlay */}
-        <div className="absolute inset-0 bg-linear-to-br from-blue-50/90 to-slate-50/95"></div>
-        <div className="relative max-w-4xl mx-auto px-4 text-center z-10">
-          <div className="inline-flex items-center px-4 py-2 rounded-full bg-brand-primary/10 text-brand-primary text-sm font-medium mb-4">
-            <Sparkles className="h-5 w-5 mr-2" />
-            Coming Soon
-          </div>
-          <h2 className="text-3xl font-bold text-gray-900 mb-6">
-            Exclusive Student Partnerships
-          </h2>
-          <div className="space-y-4 text-gray-600 mb-8">
-            <p className="text-lg leading-relaxed">
-              We're building meaningful partnerships with vendors that share our mission to bring you exclusive discounts and offers.
-            </p>
-            <p className="text-lg leading-relaxed">
-              Stay tuned for amazing deals from your favorite brands!
-            </p>
-          </div>
-          <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 max-w-md mx-auto mb-8">
-            <h3 className="font-semibold text-gray-900 mb-3">Are you a business?</h3>
-            <p className="text-gray-600 text-sm mb-4">
-              Reach thousands of students with your products or services. Get in touch to learn about partnership opportunities.
-            </p>
-            <a href="mailto:info@studentx.co.ke?subject=Partnership%20Inquiry&body=I%20am%20interested%20in%20partnering%20with%20StudentX%20to%20offer%20exclusive%20discounts%20to%20students.%20Please%20provide%20more%20information.">
-              <button className="w-full bg-brand-primary hover:bg-brand-primary/90 text-white font-medium py-3 px-6 rounded-lg transition-all duration-200 shadow-sm hover:shadow-md flex items-center justify-center">
-                Contact Us
-                <ExternalLink className="h-4 w-4 ml-2" />
-              </button>
-            </a>
-          </div>
-        </div>
-      </section >
-    );
-  }
+    fetchFeaturedMerchants();
+    return () => {
+      active = false;
+    };
+  }, []);
+
   return (
-    <section className="py-20 w-full bg-slate-100">
-      <div className="">
-        <div className="text-center mb-14">
-          <div className="inline-flex items-center px-4 py-2 rounded-full bg-brand-primary/10 text-brand-primary text-sm font-medium mb-4">
-            <BadgeCheck className="h-5 w-5 mr-2" />
-            Trusted Partners
-          </div>
-          <p className="text-neutral-medium text-sm sm:text-base">
-            Discover exclusive student discounts from top companies
-          </p>
-        </div>
+    <section className="w-full bg-neutral-50 py-20 md:py-28">
+      <div className="container mx-auto px-4">
+        {merchants.length > 0 ? (
+          <>
+            <SectionHeading
+              eyebrow="Partners"
+              title="Already offering student rates"
+            />
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 md:gap-6 px-4 max-w-7xl mx-auto">
-          {merchants.map((merchant) => (
-            <Card
-              key={merchant.id}
-              onClick={() => navigate(`/deals?search=${merchant.name}`)}
-              className="border border-gray-200 hover:border-brand-primary/30 hover:shadow-md transition-all duration-200 bg-white rounded-lg overflow-hidden group"
-            >
-              <CardContent className="flex flex-col items-center p-4 gap-3">
-                <div className="relative mb-2">
-                  <div className="w-20 h-20 rounded-full bg-gray-50 flex items-center justify-center border-[3px] border-gray-100 group-hover:border-brand-primary/20 transition-colors shadow-sm">
-                    <Avatar className="w-14 h-14">
-                      <AvatarImage src={merchant.logo} className="object-cover" />
-                      <AvatarFallback className="bg-brand-primary/10 text-brand-primary font-medium">
-                        {merchant.name.split(' ').map(word => word[0]).join('').toUpperCase()}
-                      </AvatarFallback>
-                    </Avatar>
-                  </div>
-                  {merchant.isApproved && (
-                    <div className="absolute top-0 right-0 bg-white rounded-full p-1 shadow-sm border border-amber-100">
-                      <Star className="h-3 w-3 fill-amber-500 text-amber-500" />
-                    </div>
-                  )}
-                </div>
-
-                <div className="text-center space-y-1 w-full">
-                  <h3 className="text-sm font-medium text-gray-900 group-hover:text-brand-primary transition-colors line-clamp-2">
-                    {merchant.name}
-                  </h3>
-
-                  <div className="flex items-center justify-center space-x-1">
-                    <Star className="h-3.5 w-3.5 fill-amber-500 text-amber-500" />
-                    <span className="text-xs font-medium text-gray-700">
-                      {merchant.rating || 'New'}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Modified button with smooth transitions */}
+            <div className="mt-12 grid grid-cols-2 gap-px border border-neutral-200 bg-neutral-200 sm:grid-cols-3 lg:grid-cols-5">
+              {merchants.map((merchant) => (
                 <button
-                  className="mt-2 w-full text-xs 
-                 h-0 opacity-0 overflow-hidden 
-                 group-hover:h-auto group-hover:opacity-100 
-                 bg-brand-primary hover:bg-brand-primary/90 
-                 text-white font-medium py-2 px-3 
-                 rounded-md transition-all duration-300 
-                 shadow-sm transform group-hover:translate-y-0 translate-y-2"
+                  key={merchant.id}
+                  type="button"
+                  onClick={() => navigate(`/deals?search=${encodeURIComponent(merchant.name)}`)}
+                  className="flex flex-col items-center gap-3 bg-white px-4 py-8 transition-colors hover:bg-neutral-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-primary group"
                 >
-                  View Deals
+                  <Avatar className="h-12 w-12">
+                    <AvatarImage src={merchant.logo} alt="" className="object-contain" />
+                    <AvatarFallback className="bg-neutral-100 text-sm font-semibold text-neutral-600">
+                      {merchant.name.split(' ').map((word) => word[0]).join('').toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+                  <span className="text-center text-sm font-medium text-neutral-900 group-hover:text-white">
+                    {merchant.name}
+                  </span>
                 </button>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+              ))}
+            </div>
+          </>
+        ) : (
+          <div className="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:gap-16">
+            <div className="lg:col-span-7">
+              <SectionHeading
+                eyebrow="For businesses"
+                title="Reach a campus already looking for you"
+              />
+              <dl className="mt-10 grid grid-cols-1 gap-8 sm:grid-cols-2">
+                <div className="border-t border-neutral-900 pt-5">
+                  <dt className="text-sm font-semibold text-neutral-900">
+                    Verified audience
+                  </dt>
+                  <dd className="mt-2 text-sm leading-relaxed text-neutral-600">
+                    Every account is checked as a student before it can claim.
+                  </dd>
+                </div>
+                <div className="border-t border-neutral-900 pt-5">
+                  <dt className="text-sm font-semibold text-neutral-900">
+                    You set the terms
+                  </dt>
+                  <dd className="mt-2 text-sm leading-relaxed text-neutral-600">
+                    The discount, the limits, how long it runs. Pull it anytime.
+                  </dd>
+                </div>
+              </dl>
+            </div>
+
+            <div className="lg:col-span-5">
+              <div className="border border-neutral-200 bg-white p-8">
+                <h3 className="text-lg font-semibold tracking-tight text-neutral-900">
+                  Talk to us about listing
+                </h3>
+                <p className="mt-3 text-sm leading-relaxed text-neutral-600">
+                  Tell us what you sell and who you want to reach.
+                </p>
+                <div className="mt-8">
+                  <Cta href={PARTNERSHIP_MAILTO} icon={ArrowUpRight}>
+                    Get in touch
+                  </Cta>
+                </div>
+                <p className="mt-6 border-t border-neutral-200 pt-6 text-sm text-neutral-500">
+                  info@studentx.co.ke
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </section>
   );

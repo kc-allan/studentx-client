@@ -12,23 +12,24 @@ import TestimonialsSection from "@/components/TestimonialsSection";
 import SignUpBanner from "@/components/SignUpBanner";
 import Footer from "@/components/Footer";
 
-
 const Index = () => {
   const [stripVisible, setStripVisible] = React.useState(false);
 
   return (
-    <div className="min-h-screen flex flex-col items-center w-full bg-gray-50">
+    <div className="flex min-h-screen w-full flex-col items-center bg-white">
       <AnnouncementStrip onVisibilityChange={setStripVisible} />
       <Header offsetTop={stripVisible} />
-      <main className="flex-grow flex flex-col items-center justify-center w-full">
+      {/* Order runs: the promise, then the goods, then how to get them, then who vouches for it */}
+      <main className="flex w-full flex-grow flex-col">
         <Hero />
-        <HowItWorks />
         <FeaturedCoupons />
-        <StudentOwnedOffers />
-        <LatestOffers />
         <CategoryList />
+        <LatestOffers />
+        <StudentOwnedOffers />
+        <HowItWorks />
         <ProviderHighlights />
         <TestimonialsSection />
+        <SignUpBanner />
       </main>
       <Footer />
     </div>

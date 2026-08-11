@@ -1,19 +1,20 @@
 import * as React from "react";
 import { Link } from "react-router-dom";
-import { Badge } from "@/components/ui/badge";
-import { ArrowRight } from "lucide-react";
+import { ArrowUpRight, Plus } from "lucide-react";
 import axiosInstance from "@/api/axios";
 import { toast } from "@/hooks/use-toast";
+import SectionHeading from "./SectionHeading";
 
-const getCategoryInitials = (name: string) => {
-  return name
-    .split(" ")
+/** "Student-Owned" reads as SO, so split on hyphens as well as spaces. */
+const getCategoryInitials = (name: string) =>
+  name
+    .split(/[\s\-–—_/]+/)
     .map((word) => word.replace(/[^a-zA-Z]/g, ""))
     .filter(Boolean)
     .map((word) => word[0])
     .join("")
+    .slice(0, 2)
     .toUpperCase();
-};
 
 const prioritizeStudentOwned = <T extends { slug?: string }>(items: T[]) => {
   const studentOwnedItems = items.filter((item) => item.slug === "student-owned");
@@ -51,63 +52,66 @@ const CategoryList: React.FC = () => {
     fetchCategories();
   }, []);
 
-  const visibleCategories = prioritizeStudentOwned(categories).slice(0, 5);
+  const visibleCategories = prioritizeStudentOwned(categories).slice(0, 7);
+
+  if (visibleCategories.length === 0) return null;
 
   return (
-    <section className="py-16 bg-white w-full">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12">
-          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3">
-            Popular Categories
-          </h2>
-          <p className="text-gray-500 max-w-2xl mx-auto text-base sm:text-lg">
-            Discover amazing deals across your favorite categories
-          </p>
-        </div>
+    <section className="w-full bg-neutral-50 py-20 md:py-28">
+      <div className="container mx-auto px-4">
+        <SectionHeading
+          eyebrow="Categories"
+          title="Start where you spend"
+        />
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-5 sm:gap-6">
-          {visibleCategories.map((category) => {
-            const initials = getCategoryInitials(category.name);
-            return (
-              <Link
-                to={`/deals?filters=${category.id}`}
-                key={category.id}
-                className="group outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 rounded-xl transition-transform hover:-translate-y-1"
-                aria-label={`Browse ${category.name} deals`}
-              >
-                <div className="flex flex-col items-center justify-center p-6 border border-gray-200 rounded-xl hover:border-brand-primary/50 transition-all bg-white hover:bg-gray-50 h-full shadow-sm hover:shadow-md">
-                  <div className="relative mb-4">
-                    <Badge className="h-16 w-16 rounded-full flex items-center justify-center bg-gray-100 text-brand-primary text-xl font-bold group-hover:bg-brand-primary group-hover:text-white transition-colors shadow-inner">
-                      {initials}
-                    </Badge>
-                  </div>
-                  <span className="text-sm font-medium text-center text-gray-900 group-hover:text-brand-primary transition-colors">
-                    {category.name}
-                  </span>
-                  {/* <span className="mt-1 text-xs text-gray-500 opacity-0 group-hover:opacity-100 transition-opacity">
-                    View deals
-                  </span> */}
-                </div>
-              </Link>
-            );
-          })}
+        <div className="mt-12 grid grid-cols-2 gap-4 lg:grid-cols-4">
+          {visibleCategories.map((category) => (
+            <Link
+              key={category.id}
+              to={`/deals?filters=${category.id}`}
+              className="group relative flex aspect-[4/3] flex-col overflow-hidden bg-neutral-900 p-5 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2"
+            >
+              {category.imageUrl ? (
+                <>
+                  <img
+                    src={category.imageUrl}
+                    alt=""
+                    aria-hidden
+                    loading="lazy"
+                    className="absolute inset-0 h-full w-full object-cover"
+                  />
+                  {/* Holds the label legible whatever the artwork behind it */}
+                  <div className="absolute inset-0 bg-neutral-950/65 transition-colors group-hover:bg-neutral-950/55" />
+                </>
+              ) : (
+                // Most categories carry no artwork, so the initials stand in for it
+                <span
+                  aria-hidden
+                  className="relative text-5xl font-bold leading-none tracking-tight text-white/25 transition-colors group-hover:text-white/40 lg:text-6xl"
+                >
+                  {getCategoryInitials(category.name)}
+                </span>
+              )}
+              <span className="relative mt-auto flex items-end justify-between gap-3">
+                <span className="text-base font-semibold leading-snug text-white">
+                  {category.name}
+                </span>
+                <ArrowUpRight className="h-4 w-4 shrink-0 text-white/50 transition-colors group-hover:text-white" />
+              </span>
+            </Link>
+          ))}
 
           <Link
             to="/categories"
-            className="group outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 rounded-xl transition-transform hover:-translate-y-1"
-            aria-label="View all categories"
+            className="group relative flex aspect-[4/3] flex-col border border-neutral-300 p-5 transition-colors hover:border-neutral-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2"
           >
-            <div className="flex flex-col items-center justify-center p-6 border-2 border-dashed border-gray-300 rounded-xl hover:border-brand-primary/50 transition-all bg-white hover:bg-gray-50 h-full">
-              <div className="h-16 w-16 rounded-full flex items-center justify-center bg-gray-100 text-brand-primary mb-4 group-hover:bg-brand-primary group-hover:text-white transition-colors">
-                <ArrowRight className="h-6 w-6" />
-              </div>
-              <span className="text-sm font-medium text-center text-gray-900 group-hover:text-brand-primary transition-colors">
-                View All
+            <Plus aria-hidden className="h-12 w-12 text-neutral-300 transition-colors group-hover:text-neutral-400 lg:h-14 lg:w-14" strokeWidth={1.5} />
+            <span className="mt-auto flex items-end justify-between gap-3">
+              <span className="text-base font-semibold leading-snug text-neutral-900">
+                All categories
               </span>
-              <span className="mt-1 text-xs text-gray-500 opacity-0 group-hover:opacity-100 transition-opacity">
-                Explore more
-              </span>
-            </div>
+              <ArrowUpRight className="h-4 w-4 shrink-0 text-neutral-400 transition-colors group-hover:text-neutral-900" />
+            </span>
           </Link>
         </div>
       </div>
